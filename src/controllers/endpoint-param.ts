@@ -215,5 +215,5 @@ export default class EndpointParam implements IInjectableParamsMetadata<any> {
     static hasNextFunction = (target: Type<any>, propertyKey: string) =>
     EndpointParam
         .getParams(target, propertyKey)
-        .findIndex((p) => p.service === EXPRESS_NEXT_FN) > -1;
+        .findIndex((p) => p.service === EXPRESS_NEXT_FN) > -1
 }

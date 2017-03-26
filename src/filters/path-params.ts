@@ -9,6 +9,7 @@ export class PathParamsFilter implements IFilter {
     }
 
     transform(expression: string, request, response) {
+        console.log("Parse path params");
         return this.parseService.eval(expression, request["params"]);
     }
 }
