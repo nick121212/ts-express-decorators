@@ -4,12 +4,12 @@ import * as Https from "https";
 import {$log} from "ts-log-debug";
 import {NotAcceptable} from "ts-httpexceptions";
 import Metadata from "../services/metadata";
-import {CONTROLLER_URL, CONTROLLER_MOUNT_ENDPOINTS, SERVER_SETTINGS} from "../constants/metadata-keys";
-import {ExpressApplication, ControllerService, InjectorService} from "../services";
+import {CONTROLLER_MOUNT_ENDPOINTS, CONTROLLER_URL, SERVER_SETTINGS} from "../constants/metadata-keys";
+import {ControllerService, ExpressApplication, InjectorService} from "../services";
 import MiddlewareService from "../services/middleware";
-import {Deprecated} from "../decorators/deprecated";
+import {Deprecated} from "../decorators/method/deprecated";
 import {
-    ServerSettingsService, ServerSettingsProvider, IServerMountDirectories, IServerSettings
+    IServerMountDirectories, IServerSettings, ServerSettingsProvider, ServerSettingsService
 } from "../services/server-settings";
 import GlobalErrorHandlerMiddleware from "../middlewares/global-error-handler";
 

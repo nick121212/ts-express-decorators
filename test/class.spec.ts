@@ -1,6 +1,6 @@
 import * as Chai from "chai";
-import {getClassName, getContructor} from '../src/utils/class';
-import {FakeClass} from './helper';
+import {getClassName, getContructor} from "../src/utils";
+import {FakeClass} from "./helper";
 
 const expect: Chai.ExpectStatic = Chai.expect;
 

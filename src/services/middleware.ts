@@ -1,27 +1,29 @@
-import {IInjectableMiddlewareMethod, IMiddleware, IMiddlewareSettings, MiddlewareType} from "../interfaces/Middleware";
 import {BadRequest} from "ts-httpexceptions";
-import {IInvokableScope} from "../interfaces/InvokableScope";
+import {$log} from "ts-log-debug";
+
 import {BAD_REQUEST, BAD_REQUEST_REQUIRED} from "../constants/errors-msgs";
-import {getClass} from "../utils/utils";
-import {EXPRESS_NEXT_FN, INJECT_PARAMS} from "../constants/metadata-keys";
-import Metadata from "./metadata";
-import InjectParams from "./inject-params";
+import {getClass} from "../utils";
+import {EnvTypes, ServerSettingsService} from "./server-settings";
+import {
+    IInjectableMiddlewareMethod, IInvokableScope, IMiddleware, IMiddlewareProvider, Type
+} from "../interfaces/interfaces";
+
+import {Service} from "../decorators/class/service";
+import {MiddlewareType} from "../enums/MiddlewareType";
+import EndpointParam from "../controllers/endpoint-param";
 import ConverterService from "./converter";
 import InjectorService from "./injector";
-import {Service} from "../decorators/service";
-import RequestService from "./request";
-import ControllerService from "./controller";
-import {$log} from "ts-log-debug";
-import {EnvTypes, ServerSettingsService} from "./server-settings";
-import ResponseService from "./response";
+import FilterService from "./filter";
+import {ENDPOINT_INFO, RESPONSE_DATA} from "../constants/metadata-keys";
 
 @Service()
 export default class MiddlewareService {
 
-    private static middlewares: Map<any, IMiddlewareSettings<any>> = new Map<any, IMiddlewareSettings<any>>();
+    private static middlewares: Map<any, IMiddlewareProvider<any>> = new Map<any, IMiddlewareProvider<any>>();
 
     constructor(private injectorService: InjectorService,
                 private converterService: ConverterService,
+                private filterService: FilterService,
                 private serverSettings: ServerSettingsService) {
 
     }
@@ -48,7 +50,7 @@ export default class MiddlewareService {
      * @param type
      */
     static set(target: any, type: MiddlewareType) {
-        this.middlewares.set(target, {type});
+        this.middlewares.set(target, {provide: target, useClass: target, type});
         return this;
     }
 
@@ -57,8 +59,8 @@ export default class MiddlewareService {
      * @param target
      * @returns {T}
      */
-    static get<T extends IMiddleware>(target: any): IMiddlewareSettings<T> {
-        return this.middlewares.get(target);
+    static get<T extends IMiddleware>(target: Type<T>): IMiddlewareProvider<T> {
+        return this.middlewares.get(getClass(target));
     }
 
     /**
@@ -66,8 +68,8 @@ export default class MiddlewareService {
      * @param target
      * @returns {T}
      */
-    static invoke<T extends IMiddleware>(target: any): IMiddlewareSettings<T> {
-        return this.middlewares.get(target).instance;
+    static invoke<T extends IMiddleware>(target: Type<T>): T {
+        return this.middlewares.get(getClass(target)).instance;
     }
 
     /**
@@ -75,7 +77,7 @@ export default class MiddlewareService {
      * @param target
      * @returns {boolean}
      */
-    static has(target: any): boolean {
+    static has(target: Type<any>): boolean {
         return this.middlewares.has(getClass(target));
     }
 
@@ -84,10 +86,48 @@ export default class MiddlewareService {
      * @param target
      * @returns {T}
      */
-    get<T extends IMiddleware>(target: any): IMiddlewareSettings<T> {
-        return MiddlewareService.get<T>(getClass(target));
+    get = <T extends IMiddleware>(target: Type<T>): IMiddlewareProvider<T> =>
+        MiddlewareService.get<T>(getClass(target));
+
+    /**
+     *
+     * @param target
+     */
+    has = (target: Type<any>): boolean =>
+        MiddlewareService.has(getClass(target));
+
+    /**
+     *
+     * @param key
+     * @param value
+     * @returns {null}
+     */
+    set = (key: Type<any>, value?: IMiddlewareProvider<any>): this => {
+        MiddlewareService.middlewares.set(getClass(key), value);
+        return this;
     }
 
+    /**
+     *
+     * @param callbackfn
+     * @param thisArg
+     */
+    forEach = <T extends IMiddleware>(callbackfn: (value: IMiddlewareProvider<T>, index: any, map: Map<any, IMiddlewareProvider<any>>) => void, thisArg?: any): void =>
+        MiddlewareService.middlewares.forEach(callbackfn);
+
+    /**
+     *
+     * @returns {number}
+     */
+    get size(): number {
+        return MiddlewareService.middlewares.size;
+    }
+
+    /**
+     *
+     * @param target
+     * @returns {T}
+     */
     invoke<T extends IMiddleware>(target: any): T {
         return this.get<T>(target).instance;
     }
@@ -103,12 +143,12 @@ export default class MiddlewareService {
      * Create a configuration to call the target middleware.
      * @param target
      * @param methodName
+     * @param handler
      * @returns {IInjectableMiddlewareMethod}
      */
-    createSettings(target: any, methodName?: string): IInjectableMiddlewareMethod {
+    createSettings(target: any, methodName?: string, handler?: () => Function): IInjectableMiddlewareMethod {
 
-        let handler: () => Function,
-            injectable: boolean = false,
+        let injectable: boolean = false,
             type: MiddlewareType,
             hasNextFn: boolean = false,
             length: number = 3;
@@ -117,7 +157,7 @@ export default class MiddlewareService {
             const middleware = this.get(target);
 
             type = this.get(target).type;
-            injectable = this.isInjectable(target, "use");
+            injectable = EndpointParam.isInjectable(target, "use");
             methodName = "use";
 
             handler = () => middleware.instance["use"].bind(middleware.instance);
@@ -127,12 +167,7 @@ export default class MiddlewareService {
 
             if (target && target.prototype && target.prototype[methodName]) { // endpoint
                 type = MiddlewareType.ENDPOINT;
-                injectable = this.isInjectable(target, methodName);
-
-                handler = () => {
-                    const instance = this.injectorService.get<ControllerService>(ControllerService).invoke(target);
-                    return instance[methodName].bind(instance);
-                };
+                injectable = EndpointParam.isInjectable(target, methodName);
                 length = target.prototype[methodName].length;
 
             } else {
@@ -151,9 +186,7 @@ export default class MiddlewareService {
                 hasNextFn = type !== MiddlewareType.ERROR;
             }
         } else {
-            hasNextFn = MiddlewareService
-                    .getParams(target, methodName)
-                    .findIndex((p) => p.service === EXPRESS_NEXT_FN) > -1;
+            hasNextFn = EndpointParam.hasNextFunction(target, methodName);
         }
 
         return {
@@ -171,8 +204,9 @@ export default class MiddlewareService {
      *
      * @param target
      * @param methodName
+     * @param handler
      */
-    bindMiddleware(target: any, methodName?: string): Function {
+    bindMiddleware(target: any, methodName?: string, handler?: () => Function): Function {
 
         // middleware(req, res, next, err);
         // middleware(req, res, next);
@@ -187,7 +221,7 @@ export default class MiddlewareService {
         // Middleware.use(request, response, next);
         // Middleware.use(...);
 
-        const settings = this.createSettings(target, methodName);
+        const settings = this.createSettings(target, methodName, handler);
 
         // Create Settings
         if (settings.type === MiddlewareType.ERROR) {
@@ -209,7 +243,7 @@ export default class MiddlewareService {
      * @param localScope
      * @returns {any}
      */
-    public invokeMethod(settings: IInjectableMiddlewareMethod, localScope: IInvokableScope): any {
+    invokeMethod(settings: IInjectableMiddlewareMethod, localScope: IInvokableScope): any {
 
         let {
             target, methodName, injectable,
@@ -277,30 +311,33 @@ export default class MiddlewareService {
      * @param methodName
      * @param localScope
      */
-    getInjectableParameters = (target: any, methodName: string, localScope?: IInvokableScope): any[] => {
-        const services = MiddlewareService.getParams(target, methodName);
-        const requestService = this.injectorService.get<RequestService>(RequestService);
-        const responseService = this.injectorService.get<ResponseService>(ResponseService);
+    private getInjectableParameters = (target: any, methodName: string, localScope?: IInvokableScope): any[] => {
+        const services = EndpointParam.getParams(target, methodName);
 
         return services
-            .map((param: InjectParams, index: number) => {
+            .map((param: EndpointParam, index: number) => {
+
+                let paramValue;
 
                 if (param.name in localScope) {
                     return localScope[param.name];
                 }
 
-                let paramValue;
-
-                // TODO refactoring for the next version with filters
-                /* istanbul ignore else */
-                if (param.name in requestService) {
-                    paramValue = requestService[param.name].call(requestService, localScope.request, param.expression);
+                if (param.service === ENDPOINT_INFO) {
+                    return localScope["request"].getEndpoint();
                 }
 
-                // TODO refactoring for the next version with filters
-                /* istanbul ignore else */
-                if (param.name in responseService) {
-                    paramValue = responseService[param.name].call(responseService, localScope.response, param.expression);
+                if (param.service === RESPONSE_DATA) {
+                    return localScope["request"].getStoredData();
+                }
+
+                if (this.filterService.has(param.service as Type<any>)) {
+                    paramValue = this.filterService.invokeMethod(
+                        param.service as Type<any>,
+                        param.expression,
+                        localScope.request,
+                        localScope.response
+                    );
                 }
 
                 if (param.required && (paramValue === undefined || paramValue === null)) {
@@ -310,7 +347,7 @@ export default class MiddlewareService {
                 try {
 
                     if (param.useConverter) {
-                        paramValue = this.converterService.deserialize(paramValue, param.baseType || param.use, param.use);
+                        paramValue = this.converterService.deserialize(paramValue, param.baseType || param.useType, param.useType);
                     }
 
                 } catch (err) {
@@ -334,10 +371,4 @@ export default class MiddlewareService {
 
     }
 
-    /**
-     *
-     * @param target
-     * @param methodName
-     */
-    static getParams = (target: any, methodName: string): InjectParams[] => Metadata.get(INJECT_PARAMS, target, methodName);
 }

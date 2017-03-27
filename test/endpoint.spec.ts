@@ -1,13 +1,11 @@
 import Chai = require("chai");
 import {TestInstance} from "./helper/TestInstance";
-import {BadRequest} from "ts-httpexceptions";
 import {FakeRequest} from "./helper/FakeRequest";
 import {FakeResponse} from "./helper/FakeResponse";
-import {Endpoint} from '../src/controllers/endpoint';
-import {InjectorService} from '../src/services';
+import {Endpoint} from "../src/controllers/endpoint";
+import {InjectorService} from "../src/services";
+import ControllerService from "../src/services/controller";
 import assert = require('assert');
-import ControllerService from '../src/services/controller';
-import Metadata from "../src/services/metadata";
 
 let expect: Chai.ExpectStatic = Chai.expect;
 
@@ -43,7 +41,7 @@ describe("Endpoint :", () => {
             expect(endpoint.getMethod()).to.equal('get');
             expect(endpoint.getRoute()).to.equal('/');
 
-            expect(endpoint.getMiddlewares()).to.be.an('array');
+            expect(ControllerService.getMiddlewares(endpoint)).to.be.an("array");
             expect((endpoint as any).middlewares.length).to.equal(0);
         });
 
@@ -61,7 +59,7 @@ describe("Endpoint :", () => {
             expect(endpoint.getMethod()).to.equal('get');
             expect(endpoint.getRoute()).to.equal('/');
 
-            expect(endpoint.getMiddlewares()).to.be.an('array');
+            expect(ControllerService.getMiddlewares(endpoint)).to.be.an("array");
             expect((endpoint as any).middlewares.length).to.equal(1);
         });
 
@@ -81,7 +79,7 @@ describe("Endpoint :", () => {
             expect(endpoint.getMethod()).to.equal('get');
             expect(endpoint.getRoute()).to.equal('/');
 
-            const middlewares = endpoint.getMiddlewares();
+            const middlewares = ControllerService.getMiddlewares(endpoint);
 
             expect(middlewares).to.be.an('array');
             // expect(middlewares.length).to.equal(4);

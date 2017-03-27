@@ -1,6 +1,6 @@
 import * as Chai from "chai";
-import InjectorService from '../src/services/injector';
-import {inject} from '../src/testing/inject';
+import InjectorService from "../src/services/injector";
+import {inject} from "../src/testing/inject";
 import {Inject} from "../src/decorators/inject";
 
 const expect: Chai.ExpectStatic = Chai.expect;
@@ -109,7 +109,7 @@ describe('InjectorService :', () => {
 
                 const instance = new InvokeMethodTest("2");
 
-                const result =  injectorService.invokeMethod(instance.method, {target: instance});
+                const result = injectorService.invokeMethod(instance.method, {target: instance} as any);
 
                 expect(result).to.be.an.instanceof(InjectorService);
             }));

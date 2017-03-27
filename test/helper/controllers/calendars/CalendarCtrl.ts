@@ -1,21 +1,17 @@
 import {
-    Controller, Get, Post, Put, Delete,
-    PathParams, Request, Response,
-    BodyParams, Required, Use, Header, Next, Authenticated,
-    CookiesParams, QueryParams,
-    RouterController,
-    IPromise
+    Authenticated, BodyParams, Controller, CookiesParams, Delete, Get, Header, Next, PathParams, Post, Put, QueryParams,
+    Request, Required, Response, RouterController, Use
 } from "../../../../src/index";
 
 import {$log} from "ts-log-debug";
 import * as Express from "express";
 import {EventCtrl} from "./EventCtrl";
-import {MongooseService} from "../../services/MongooseService"
-import {ContentType} from "../../../../src/decorators/content-type";
-import {UseAfter} from "../../../../src/decorators/use-after";
-import {Status} from "../../../../src/decorators/status";
-import {MultipartFile} from "../../../../src/decorators/multipart-file";
-import {Locals} from "../../../../src/decorators/params";
+import {MongooseService} from "../../services/MongooseService";
+import {ContentType} from "../../../../src/decorators/method/content-type";
+import {UseAfter} from "../../../../src/decorators/method/use-after";
+import {Status} from "../../../../src/decorators/method/status";
+import {MultipartFile} from "../../../../src/decorators/param/multipart-file";
+import {Locals} from "../../../../src/decorators/param/params";
 
 interface ICalendar {
     id: string;
@@ -126,8 +122,7 @@ export class CalendarCtrl {
     @Get("/annotation/promised/:id")
     public findWithPromise(
         @Request() request,
-        @PathParams("id") id
-    ): IPromise<ICalendar> {
+        @PathParams("id") id): Promise<ICalendar> {
 
         $log.debug("ID =>", id, request.params.id);
 
@@ -156,8 +151,7 @@ export class CalendarCtrl {
     public findAndChangeStatusCode(
         @Request() request: Express.Request,
         @Response() response: Express.Response,
-        @PathParams("id") id: string
-    ): IPromise<ICalendar> {
+        @PathParams("id") id: string): Promise<ICalendar> {
 
         //$log.debug("ID =>", id, request.params.id);
         //

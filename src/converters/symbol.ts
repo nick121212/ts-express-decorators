@@ -1,6 +1,5 @@
-import {IConverter} from "../interfaces/Converter";
-import {Converter} from "../decorators/converter";
-import {BadRequest} from "ts-httpexceptions";
+import {IConverter} from "../interfaces";
+import {Converter} from "../decorators/class/converter";
 
 @Converter(Symbol)
 export class SymbolConverter implements IConverter {

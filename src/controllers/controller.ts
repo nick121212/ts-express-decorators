@@ -1,6 +1,6 @@
 import {Endpoint} from "./endpoint";
 import * as Express from "express";
-import {getClassName} from "../utils/class";
+import {getClassName} from "../utils";
 import Metadata from "../services/metadata";
 
 import {CONTROLLER_MOUNT_ENDPOINTS, CONTROLLER_ROUTER_OPTIONS} from "../constants/metadata-keys";
@@ -34,14 +34,34 @@ export default class Controller {
      * @param _dependencies
      * @param _createInstancePerRequest
      */
-    constructor(private _targetClass: any,
-                private _endpointUrl: string,
-                private _dependencies: (string | Function | Controller)[] = [],
-                private _createInstancePerRequest: boolean = false) {
+    constructor (
+        private _targetClass: any,
+        private _endpointUrl: string,
+        private _dependencies: (string | Function | Controller)[] = [],
+        private _createInstancePerRequest: boolean = false
+    ) {
 
         this._router = Express.Router(Metadata.get(CONTROLLER_ROUTER_OPTIONS, _targetClass));
 
         this.metadataToEndpoints();
+    }
+
+    /**
+     * Return the class name.
+     */
+    public getName = () => getClassName(this._targetClass);
+
+    /**
+     * Resolve final endpoint url.
+     */
+    public getEndpointUrl = (endpoint: string = ""): string =>
+        endpoint === this.endpointUrl ? this.endpointUrl : endpoint + this.endpointUrl;
+
+    /**
+     *
+     */
+    public hasEndpointUrl() {
+        return !!this.endpointUrl;
     }
 
     /**
@@ -62,52 +82,6 @@ export default class Controller {
             .filter(e => !!e);
 
         return this;
-    }
-
-    /**
-     * Map all endpoints generated to his class Router.
-     */
-    public mapEndpointsToRouters(): Controller {
-
-        this.endpoints
-            .forEach((endpoint: Endpoint) => {
-
-                const middlewares = endpoint.getMiddlewares();
-
-                if (endpoint.hasMethod() && this.router[endpoint.getMethod()]) {
-
-                    this.router[endpoint.getMethod()](endpoint.getRoute(), ...middlewares);
-
-                } else {
-                    this.router.use(...middlewares);
-                }
-
-            });
-
-        this.dependencies
-            .forEach((ctrl: Controller) => {
-                this.router.use(ctrl.endpointUrl, ctrl.router);
-            });
-
-        return this;
-    }
-
-    /**
-     * Return the class name.
-     */
-    public getName = () => getClassName(this._targetClass);
-
-    /**
-     * Resolve final endpoint url.
-     */
-    public getEndpointUrl = (endpoint: string = ""): string =>
-        endpoint === this.endpointUrl ? this.endpointUrl : endpoint + this.endpointUrl
-
-    /**
-     *
-     */
-    public hasEndpointUrl() {
-        return !!this.endpointUrl;
     }
 
     /**
