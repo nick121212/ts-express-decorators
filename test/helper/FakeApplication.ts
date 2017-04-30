@@ -1,7 +1,8 @@
 import * as SuperTest from "supertest";
 import {$log} from "ts-log-debug";
-import {ServerLoader, ServerSettings} from "../../src/index";
 import * as Express from "express";
+import {ServerSettings} from "../../src/server/decorators/serverSettings";
+import {ServerLoader} from "../../src/server/components/ServerLoader";
 import Path = require("path");
 
 const rootDir = Path.resolve(__dirname);

@@ -1,5 +1,4 @@
-import {Controller, Delete, Get, Head, Patch, Post, Put, Response} from "../../../../src/index";
-import {BodyParams} from "../../../../src/decorators/param/params";
+import {BodyParams, Controller, Delete, Get, Head, Patch, Post, Put, Response} from "../../../../src/index";
 import {EventModel} from "../../models/Event";
 
 
@@ -32,8 +31,7 @@ export class EventCtrl {
      * @returns {null}
      */
     @Get('/:id')
-    find(
-        @Response() response: any): Promise<IEvent> | void {
+    find(@Response() response: any): Promise<IEvent> | void {
 
         response.send(200, 'OK');
 

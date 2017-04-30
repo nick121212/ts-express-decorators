@@ -1,10 +1,7 @@
 import {BadRequest} from "ts-httpexceptions";
-import {Request} from "../../src/decorators/param/request";
-import {Next} from "../../src/decorators/param/next";
-import {Response} from "../../src/decorators/param/response";
-import {BodyParams, CookiesParams, PathParams, QueryParams, Session} from "../../src/decorators/param/params";
-import {Required} from "../../src/decorators/required";
-import {ResponseView} from "../../src/decorators/method/response-view";
+import {
+    BodyParams, CookiesParams, Next, PathParams, QueryParams, Request, Required, Response, ResponseView, Session
+} from "../../src";
 
 export class TestInstance {
 

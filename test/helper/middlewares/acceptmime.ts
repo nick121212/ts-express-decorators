@@ -1,9 +1,6 @@
 import * as Express from "express";
 import {NotAcceptable} from "ts-httpexceptions";
-import {Middleware} from "../../../src/decorators/class/middleware";
-import {IMiddleware} from "../../../src/interfaces";
-import {Request} from "../../../src/decorators/param/request";
-import {Next} from "../../../src/decorators/param/next";
+import {IMiddleware, Middleware, Next, Request} from "../../../src";
 
 @Middleware()
 export default class TestAcceptMimeMiddleware implements IMiddleware {

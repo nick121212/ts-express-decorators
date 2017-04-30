@@ -1,6 +1,8 @@
 import {Done} from "./done";
-import {ExpressApplication, InjectorService} from "../services";
-import {ServerSettingsService, ServerSettingsProvider, EnvTypes} from "../services/server-settings";
+import {ServerSettingsProvider, ServerSettingsService} from "../server/services/ServerSettings";
+import {InjectorService} from "../di/services/InjectorService";
+import {ExpressApplication} from "../core/services/ExpressApplication";
+import {EnvTypes} from "../core/interfaces/Env";
 
 /**
  * The inject function is one of the TsExpressDecorator testing utilities.

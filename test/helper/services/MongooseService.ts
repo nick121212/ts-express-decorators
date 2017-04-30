@@ -1,8 +1,6 @@
-
-import {Service} from '../../../src/index';
 import {SanitizeService} from "./SanitizeService";
 import {CustomFactory} from "./CustomFactory";
-import {Inject} from "../../../src/decorators/inject";
+import {Inject, Service} from "../../../src";
 
 @Service()
 export class MongooseService{

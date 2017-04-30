@@ -1,6 +1,5 @@
-
 import {$log} from "ts-log-debug";
-import {ServerLoader} from "../server/server-loader";
+import {ServerLoader} from "../server/components/ServerLoader";
 
 export function bootstrap(server: any, ...args) {
 
