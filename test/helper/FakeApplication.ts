@@ -3,6 +3,7 @@ import {$log} from "ts-log-debug";
 import * as Express from "express";
 import {ServerSettings} from "../../src/server/decorators/serverSettings";
 import {ServerLoader} from "../../src/server/components/ServerLoader";
+import {GlobalAcceptMimesMiddleware} from "../../src/mvc/components/GlobalAcceptMimesMiddleware";
 import Path = require("path");
 
 const rootDir = Path.resolve(__dirname);
@@ -19,7 +20,8 @@ const rootDir = Path.resolve(__dirname);
     ],
     serveStatic: {
         '/': `${rootDir}/views`
-    }
+    },
+    acceptMimes: ["application/json"]
 })
 export class FakeApplication extends ServerLoader {
 
@@ -40,7 +42,7 @@ export class FakeApplication extends ServerLoader {
 
         this
         //.use(morgan('dev'))
-            .use(ServerLoader.AcceptMime("application/json"))
+            .use(GlobalAcceptMimesMiddleware)
             .use(bodyParser.json())
             .use(bodyParser.urlencoded({
                 extended: true

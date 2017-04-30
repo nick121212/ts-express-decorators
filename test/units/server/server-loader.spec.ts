@@ -1,28 +1,10 @@
 import {expect} from "chai";
-import {NotAcceptable} from "ts-httpexceptions";
 import {ServerLoader, ServerSettingsService} from "../../../src";
-import {FakeRequest, FakeResponse, FakeServer} from "../../helper";
+import {FakeServer} from "../../helper";
 import {$log} from "ts-log-debug";
 import assert = require("assert");
 
 describe("ServerLoader()", () => {
-
-    describe('ServerLoader.AcceptMime', () => {
-
-        it('Should throw exception', () => {
-            const middleware = ServerLoader.AcceptMime("application/json");
-            const fakeRequest = new FakeRequest();
-
-            try {
-                middleware(fakeRequest, new FakeResponse(), () => (undefined));
-            } catch (er) {
-
-                expect(er instanceof NotAcceptable).to.be.true;
-
-            }
-        });
-
-    });
 
     describe('ServerLoader.start', () => {
 

@@ -6,7 +6,6 @@ import * as Express from "express";
 import * as Http from "http";
 import * as Https from "https";
 import {$log} from "ts-log-debug";
-import {NotAcceptable} from "ts-httpexceptions";
 import {Deprecated, ExpressApplication, Metadata} from "../../core";
 
 import {ServerSettingsProvider, ServerSettingsService} from "../services/ServerSettings";
@@ -518,34 +517,5 @@ export abstract class ServerLoader implements IServerLifecycle {
      */
     get httpsServer(): Https.Server {
         return this._httpsServer;
-    }
-
-    @Deprecated("ServerLoader.getExpressApp is deprecated. Use ServerLoader.expressApp instead of.")
-    /* istanbul ignore next */
-    getExpressApp() {
-        return this.expressApp;
-    }
-
-    /**
-     * Set the mime acceptable to all request. Return a middleware for express.
-     * @param mimes
-     * @returns {function(Express.Request, Express.Response, Express.NextFunction): any}
-     * @constructor
-     */
-    @Deprecated("ServerLoader.AcceptMime() is deprecated. Use your own middleware instead of.")
-    /* istanbul ignore next */
-    static AcceptMime(...mimes: string[]): Function {
-
-        return function(req: Express.Request, res: Express.Response, next: Express.NextFunction): any {
-
-            for (let i = 0; i < mimes.length; i++) {
-                if (!req.accepts(mimes[i])) {
-                    throw new NotAcceptable(mimes[i]);
-                }
-            }
-
-            next();
-        };
-
     }
 }
