@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {inject} from "../../../src/testing";
-import {RouteService} from "../../../src";
+import {inject} from "../../../../src/testing";
+import {RouteService} from "../../../../src";
 import {$log} from "ts-log-debug";
 
 describe('RouteService :', function() {

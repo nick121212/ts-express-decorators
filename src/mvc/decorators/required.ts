@@ -1,12 +1,13 @@
 /**
  * @module mvc
- */
+ */ /** */
 
 import {Type} from "../../core/interfaces/Type";
 import {EndpointParam} from "../class/EndpointParam";
 /**
  * Add required annotation for a function argument .
  * @returns {Function}
+ * @decorator
  */
 export function Required(): any {
 

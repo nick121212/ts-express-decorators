@@ -12,7 +12,9 @@ import {ResponseData} from "../decorators/param/responseData";
 import {EndpointInfo} from "../decorators/param/endpointInfo";
 import {Response} from "../decorators/param/response";
 import {Endpoint} from "../class/Endpoint";
-
+/**
+ * @private
+ */
 @Middleware()
 export class ResponseViewMiddleware implements IMiddleware {
 

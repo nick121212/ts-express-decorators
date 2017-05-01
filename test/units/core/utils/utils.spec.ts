@@ -32,9 +32,6 @@ class Test2{
     }
 }
 
-
-
-
 describe('Utils :', () => {
 
     describe('getClass', () => {

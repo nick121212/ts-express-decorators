@@ -1,6 +1,7 @@
 /**
- * @module middlewares
+ * @module mvc
  */
+/** */
 import {Forbidden} from "ts-httpexceptions";
 import {ServerSettingsService} from "../../server/services/ServerSettings";
 import {Middleware} from "../decorators/class/middleware";
@@ -10,7 +11,9 @@ import {EndpointInfo} from "../decorators/param/endpointInfo";
 import {Next} from "../decorators/param/next";
 import {Response} from "../decorators/param/response";
 import {Request} from "../decorators/param/request";
-
+/**
+ * @private
+ */
 @Middleware()
 export class AuthenticatedMiddleware implements IMiddleware {
 

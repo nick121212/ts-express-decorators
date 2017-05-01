@@ -25,7 +25,7 @@ export const ENDPOINT_USE_AFTER = "tsed:endpoint:use:after";
  * @private
  * @type {string}
  */
-export const INJECT_PARAMS = "tsed:inject:params";
+export const ENDPOINT_INJECT_PARAMS = "tsed:inject:params";
 /**
  * Express methods
  * @private

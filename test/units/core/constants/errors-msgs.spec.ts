@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {
     BAD_REQUEST, BAD_REQUEST_REQUIRED, CONVERTER_DESERIALIZE, CONVERTER_SERIALIZE, CYCLIC_REF,
     DUPLICATED_CONTROLLER_DECORATOR, TEMPLATE_RENDERING_ERROR, UNKNOW_CONTROLLER, UNKNOW_SERVICE
-} from "../../../src/core/constants/errors-msgs";
+} from "../../../../src/core/constants/errors-msgs";
 
 describe('Errors Messages : ', () => {
 

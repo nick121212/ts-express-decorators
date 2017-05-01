@@ -1,13 +1,13 @@
 import {
     BodyParams, Controller, Get, IMiddleware, IMiddlewareError, Middleware, MiddlewareError, MiddlewareService, Next,
     Request
-} from "../../../src";
-import {inject} from "../../../src/testing/inject";
+} from "../../../../src";
+import {inject} from "../../../../src/testing/inject";
 import {assert, expect} from "chai";
-import {Done} from "../../../src/testing/done";
-import {FakeRequest} from "../../helper/FakeRequest";
-import {MiddlewareType} from "../../../src/mvc/interfaces/Middleware";
-import {SendResponseMiddleware} from "../../../src/mvc/components/SendResponseMiddleware";
+import {Done} from "../../../../src/testing/done";
+import {FakeRequest} from "../../../helper/FakeRequest";
+import {MiddlewareType} from "../../../../src/mvc/interfaces/Middleware";
+import {SendResponseMiddleware} from "../../../../src/mvc/components/SendResponseMiddleware";
 
 @Middleware()
 class MiddlewareTest implements IMiddleware {

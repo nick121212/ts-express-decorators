@@ -1,6 +1,7 @@
 /**
  * @module mvc
  */
+/** */
 import {Service} from "../../di/decorators/service";
 import {$log} from "ts-log-debug";
 import {ControllerService} from "./ControllerService";

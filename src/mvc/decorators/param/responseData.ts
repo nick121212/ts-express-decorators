@@ -1,9 +1,6 @@
 /**
  * @module mvc
- */
-/**
- * @module mvc
- */
+ */ /** */
 
 import {Type} from "../../../core/interfaces/Type";
 import {EndpointParam} from "../../class/EndpointParam";
@@ -11,7 +8,7 @@ import {RESPONSE_DATA} from "../../constants/index";
 /**
  *
  * @returns {function(Function, (string|symbol), number): void}
- * @constructor
+ * @decorator
  */
 export function ResponseData(): Function {
 

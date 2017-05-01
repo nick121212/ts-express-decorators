@@ -13,7 +13,7 @@
     "tsc": "tsc",
     "tsc:compile": "rm -rf ./lib && tsc --project tsconfig.compile.json",
     "version": "npm run build:doc && git add docs",
-    "build:doc": "typedoc --target ES6 --module commonjs --name TsHttpExceptions --exclude '**/*.spec.ts' --out docs/ ./src/**/*.ts"
+    "build:doc": "typedoc --target ES6 --module commonjs --name TsExpressDecorators --exclude '**/test/**/*.ts' --out docs/ ./src/**/*.ts"
   },
   "repository": {
     "type": "git",

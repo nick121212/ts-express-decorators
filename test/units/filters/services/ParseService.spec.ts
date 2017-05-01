@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {Done, inject} from "../../../src/testing";
-import {ParseService} from "../../../src";
+import {Done, inject} from "../../../../src/testing";
+import {ParseService} from "../../../../src";
 
 describe('ParseService :', () => {
 

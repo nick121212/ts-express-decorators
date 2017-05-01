@@ -1,11 +1,14 @@
 /**
  * @module filters
  */
+/** */
 
 import {IFilter} from "../interfaces";
 import {Filter} from "../decorators/filter";
 import {ParseService} from "../services/ParseService";
-
+/**
+ * @private
+ */
 @Filter()
 export class QueryParamsFilter implements IFilter {
     constructor(private parseService: ParseService) {

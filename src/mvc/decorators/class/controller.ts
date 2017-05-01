@@ -1,3 +1,7 @@
+/**
+ * @module mvc
+ */
+/** */
 import {Metadata} from "../../../core/class/Metadata";
 import {CONTROLLER_DEPEDENCIES, CONTROLLER_URL} from "../../constants/index";
 /**
@@ -5,24 +9,24 @@ import {CONTROLLER_DEPEDENCIES, CONTROLLER_URL} from "../../constants/index";
  * This routing listing will be built with the `express.Router` object.
  *
  * ```typescript
- * \@ControllerMetadata("/calendars")
- * export class CalendarCtrl {
+ *  @Controller("/calendars")
+ *  export class CalendarCtrl {
  *
- *   \@Get("/:id")
- *   public get(
- *       \@Request() request: Express.Request,
- *       \@Response() response: Express.Response,
- *       \@Next() next: Express.NextFunction
- *   ): void {
+ *    @Get("/:id")
+ *    public get(
+ *      @Request() request: Express.Request,
+ *      @Response() response: Express.Response,
+ *      @Next() next: Express.NextFunction
+ *    ): void {
  *
- *   }
- * }
+ *    }
+ *  }
  * ```
  *
  * @param ctrlUrl
  * @param ctlrDepedencies
  * @returns {Function}
- * @constructor
+ * @decorator
  */
 export function Controller(ctrlUrl: string, ...ctlrDepedencies: any[]): Function {
 

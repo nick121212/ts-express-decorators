@@ -32,7 +32,7 @@ export class CalendarCtrl {
     }
     /**
      * Example of classic call. Use `@Get` for routing a request to your method.
-     * In this case, this route "/calendar/classic/:id" are mounted on the "rest/" path (call /rest/calendar/classic/:id
+     * In this case, this route "/calendar/classic/:id" are mounted on the "integration/" path (call /integration/calendar/classic/:id
      * to test your service).
      *
      * By default, the response is sent with status 200 and is serialized in JSON.

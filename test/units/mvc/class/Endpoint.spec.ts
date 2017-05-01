@@ -1,8 +1,8 @@
 import {assert, expect} from "chai";
-import {TestInstance} from "../../helper/TestInstance";
-import {FakeRequest} from "../../helper/FakeRequest";
-import {FakeResponse} from "../../helper/FakeResponse";
-import {ControllerService, Endpoint, InjectorService} from "../../../src";
+import {TestInstance} from "../../../helper/TestInstance";
+import {FakeRequest} from "../../../helper/FakeRequest";
+import {FakeResponse} from "../../../helper/FakeResponse";
+import {ControllerService, Endpoint, InjectorService} from "../../../../src";
 
 describe("Endpoint :", () => {
 

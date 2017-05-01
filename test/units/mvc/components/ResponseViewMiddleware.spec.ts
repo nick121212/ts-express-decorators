@@ -1,7 +1,7 @@
 import {expect} from "chai";
-import {MiddlewareService} from "../../../src";
-import {inject} from "../../../src/testing/inject";
-import {ResponseViewMiddleware} from "../../../src/mvc/components/ResponseViewMiddleware";
+import {MiddlewareService} from "../../../../src";
+import {inject} from "../../../../src/testing/inject";
+import {ResponseViewMiddleware} from "../../../../src/mvc/components/ResponseViewMiddleware";
 
 describe('ResponseViewMiddleware :', () => {
 

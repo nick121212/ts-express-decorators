@@ -1,7 +1,7 @@
 /**
  * @module filters
  * @preferred
- */
+ */ /** */
 export * from "./interfaces";
 export * from "./decorators/filter";
 export * from "./services/FilterService";

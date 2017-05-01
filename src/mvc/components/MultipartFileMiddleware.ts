@@ -8,7 +8,9 @@ import {$log} from "ts-log-debug";
 import {IMiddleware} from "../interfaces/index";
 import {EndpointInfo, Next, Request, Response} from "../";
 import {Endpoint} from "../class/Endpoint";
-
+/**
+ * @private
+ */
 @Middleware()
 export class MultipartFileMiddleware implements IMiddleware {
 

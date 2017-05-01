@@ -1,7 +1,7 @@
 /**
  * @module mvc
  * @preferred
- */
+ */ /** */
 export * from "./interfaces";
 
 // class

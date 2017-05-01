@@ -1,7 +1,7 @@
 /**
  * @module di
  * @preferred
- */
+ */ /** */
 export * from "./interfaces/InjectableMethod";
 export * from "./interfaces/Provider";
 export * from "./decorators/service";

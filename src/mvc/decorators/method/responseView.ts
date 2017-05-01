@@ -1,3 +1,7 @@
+/**
+ * @module mvc
+ */
+/** */
 import {UseAfter} from "./useAfter";
 import {ResponseViewMiddleware} from "../../components/ResponseViewMiddleware";
 import {Endpoint} from "../../class/Endpoint";
@@ -20,7 +24,7 @@ import {Endpoint} from "../../class/Endpoint";
  * @param viewPath
  * @param viewOptions
  * @returns {Function}
- * @constructor
+ * @decorator
  */
 export function ResponseView(viewPath: string, viewOptions?: Object): Function {
 
@@ -51,7 +55,8 @@ export function ResponseView(viewPath: string, viewOptions?: Object): Function {
  * @param viewPath
  * @param viewOptions
  * @returns {Function}
- * @constructor
+ * @decorator
+ * @alias ResponseView
  */
 export function Render(viewPath: string, viewOptions?: Object): Function {
     return ResponseView(viewPath, viewOptions);

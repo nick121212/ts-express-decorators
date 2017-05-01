@@ -1,6 +1,7 @@
 /**
  * @module mvc
  */
+/** */
 import * as Express from "express";
 /**
  * RouteController give the express Router use by the decorated controller.

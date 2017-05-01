@@ -8,7 +8,7 @@ import {EXPRESS_NEXT_FN} from "../../constants/index";
 /**
  *
  * @returns {function(Function, (string|symbol), number): void}
- * @constructor
+ * @decorator
  */
 export function Next(): Function {
 

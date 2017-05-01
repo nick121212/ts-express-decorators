@@ -1,3 +1,7 @@
+/**
+ * @module testing
+ */
+/** */
 import {Done} from "./done";
 import {ServerSettingsProvider, ServerSettingsService} from "../server/services/ServerSettings";
 import {InjectorService} from "../di/services/InjectorService";

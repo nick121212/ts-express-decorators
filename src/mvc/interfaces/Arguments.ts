@@ -1,3 +1,7 @@
+/**
+ * @module mvc
+ */ /** */
+
 import {Type} from "../../core/interfaces/Type";
 /**
  *
@@ -12,12 +16,14 @@ export interface IClassArgs<T> {
 export interface IMethodArgs<T> extends IClassArgs<T> {
     propertyKey: string | symbol;
 }
+
 /**
  *
  */
 export interface IAttributArgs<T> extends IClassArgs<T> {
     propertyKey: string | symbol;
 }
+
 /**
  *
  */

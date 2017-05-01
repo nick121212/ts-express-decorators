@@ -1,4 +1,8 @@
 /**
+ * @module server
+ */ /** */
+
+/**
  * ServerLoader lifecycle let you intercept a phase.
  */
 export interface IServerLifecycle {

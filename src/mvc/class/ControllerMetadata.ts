@@ -1,11 +1,14 @@
 /**
  * @module mvc
  */
+/** */
 import * as Express from "express";
 import {Endpoint} from "./Endpoint";
 import {getClassName, Metadata} from "../../core";
 import {CONTROLLER_MOUNT_ENDPOINTS, CONTROLLER_ROUTER_OPTIONS} from "../constants/index";
-
+/**
+ *
+ */
 export class ControllerMetadata {
 
     /**

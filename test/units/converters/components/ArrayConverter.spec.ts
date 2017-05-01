@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {inject} from "../../../src/testing/inject";
-import {ConverterService} from "../../../src";
+import {inject} from "../../../../src/testing/inject";
+import {ConverterService} from "../../../../src";
 import assert = require('assert');
 
 

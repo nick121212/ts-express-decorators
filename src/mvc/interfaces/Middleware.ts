@@ -1,7 +1,11 @@
 /**
  * @module mvc
- */
+ */ /** */
+
 import {IProvider} from "../../di/interfaces/Provider";
+/**
+ *
+ */
 export enum MiddlewareType {
     ERROR,
     MIDDLEWARE,
@@ -13,7 +17,9 @@ export enum MiddlewareType {
 export interface IMiddleware {
     use?: Function;
 }
-
+/**
+ *
+ */
 export interface IMiddlewareError {
     use?: Function;
 }
@@ -31,6 +37,7 @@ export interface IInjectableMiddlewareMethod {
     injectable: boolean;
     hasNextFn: boolean;
 }
+
 /**
  *
  */

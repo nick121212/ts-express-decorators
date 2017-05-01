@@ -1,6 +1,7 @@
 /**
- * @module middlewares
+ * @module mvc
  */
+/** */
 import * as Express from "express";
 
 import {Middleware} from "../decorators/class/middleware";
@@ -8,7 +9,9 @@ import {IMiddleware} from "../interfaces/index";
 import {ConverterService} from "../../converters/services/ConverterService";
 import {ResponseData} from "../decorators/param/responseData";
 import {Response} from "../decorators/param/response";
-
+/**
+ * @private
+ */
 @Middleware()
 export class SendResponseMiddleware implements IMiddleware {
 

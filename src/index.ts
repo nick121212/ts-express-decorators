@@ -1,7 +1,8 @@
 /**
- * @module ts-express-decorators
+ * @module core
  * @preferred
  */
+/** */
 require("source-map-support").install();
 import "reflect-metadata";
 

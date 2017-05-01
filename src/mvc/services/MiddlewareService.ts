@@ -1,6 +1,6 @@
 /**
  * @module mvc
- */
+ */ /** */
 
 import {BadRequest} from "ts-httpexceptions";
 import {$log} from "ts-log-debug";
@@ -20,6 +20,9 @@ import {EndpointParam} from "../class/EndpointParam";
 import {ENDPOINT_INFO, RESPONSE_DATA} from "../constants/index";
 import {BAD_REQUEST, BAD_REQUEST_REQUIRED} from "../../core/constants/errors-msgs";
 
+/**
+ *
+ */
 @Service()
 export class MiddlewareService {
 

@@ -1,8 +1,7 @@
-import {expect} from "chai";
+import {assert, expect} from "chai";
 import {ServerLoader, ServerSettingsService} from "../../../src";
 import {FakeServer} from "../../helper";
 import {$log} from "ts-log-debug";
-import assert = require("assert");
 
 describe("ServerLoader()", () => {
 
@@ -14,13 +13,16 @@ describe("ServerLoader()", () => {
 
             server.createHttpServer(8000);
             server.setHttpPort(8000);
+
             server.startServers = function () {
             };
+
             server.$onReady = function () {
                 expect(this.expressApp).to.be.an('function');
             };
             server.$onInit = function () {
             };
+
             const promise = server.start();
 
             // console.log('Promise', typeof promise);
@@ -37,8 +39,8 @@ describe("ServerLoader()", () => {
 
             const server: any = new FakeServer();
 
-            server.createHttpServer(8000);
-            server.setHttpPort(8000);
+            // server.createHttpServer(8000);
+            // server.setHttpPort(8000);
 
             $log.setRepporting({
                 error: false

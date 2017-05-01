@@ -9,7 +9,12 @@ import {UseBefore} from "../method/useBefore";
 import {Metadata} from "../../../core/class/Metadata";
 import {MultipartFileFilter, MultipartFilesFilter} from "../../../filters/components/MultipartFileFilter";
 import {EndpointParam} from "../../class/EndpointParam";
-
+/**
+ *
+ * @param options
+ * @returns {(target:Type<T>, propertyKey:string, parameterIndex:number)=>void}
+ * @decorator
+ */
 export function MultipartFile(options?: any): Function {
 
     return <T>(target: Type<T>, propertyKey: string, parameterIndex: number): void => {

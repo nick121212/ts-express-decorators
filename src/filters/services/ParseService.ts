@@ -1,6 +1,12 @@
+/**
+ * @module filters
+ */
+/** */
 import {Service} from "../../di/decorators/service";
 import {isEmpty} from "../../core/utils";
-
+/**
+ *
+ */
 @Service()
 export class ParseService {
 

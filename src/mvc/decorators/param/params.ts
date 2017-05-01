@@ -1,6 +1,6 @@
 /**
  * @module mvc
- */
+ */ /** */
 
 import {Type} from "../../../core/interfaces/Type";
 import {EndpointParam} from "../../class/EndpointParam";
@@ -17,7 +17,7 @@ import {HeaderFilter} from "../../../filters/components/HeaderFilter";
  * @param expression
  * @param useType
  * @returns {function(Function, (string|symbol), number): void}
- * @constructor
+ * @decorator
  */
 export function CookiesParams(expression?: string | any, useType?: any): Function {
 
@@ -43,7 +43,7 @@ export function CookiesParams(expression?: string | any, useType?: any): Functio
  * @param expression
  * @param useType
  * @returns {function(Function, (string|symbol), number): void}
- * @constructor
+ * @decorator
  */
 export function BodyParams(expression?: string | any, useType?: any): Function {
 
@@ -69,7 +69,7 @@ export function BodyParams(expression?: string | any, useType?: any): Function {
  * @param expression
  * @param useType
  * @returns {function(Function, (string|symbol), number): void}
- * @constructor
+ * @decorator
  */
 export function PathParams(expression?: string | any, useType?: any): Function {
 
@@ -95,7 +95,7 @@ export function PathParams(expression?: string | any, useType?: any): Function {
  * @param expression
  * @param useType
  * @returns {function(Function, (string|symbol), number): void}
- * @constructor
+ * @decorator
  */
 export function QueryParams(expression?: string | any, useType?: any): Function {
 
@@ -121,7 +121,7 @@ export function QueryParams(expression?: string | any, useType?: any): Function 
  * @param expression
  * @param useType
  * @returns {(target:any, propertyKey:(string|symbol), parameterIndex:number)=>void}
- * @constructor
+ * @decorator
  */
 export function Session(expression?: string | any, useType?: any) {
 
@@ -145,7 +145,7 @@ export function Session(expression?: string | any, useType?: any) {
  *
  * @param expression
  * @returns {(target:any, propertyKey:(string|symbol), parameterIndex:number)=>void}
- * @constructor
+ * @decorator
  */
 export function HeaderParams(expression: string) {
 
@@ -169,7 +169,7 @@ export function HeaderParams(expression: string) {
  *
  * @param expression
  * @returns {function(Function, (string|symbol), number): void}
- * @constructor
+ * @decorator
  */
 export function Locals(expression?: string | any): Function {
 

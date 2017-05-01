@@ -1,3 +1,7 @@
+/**
+ * @module filters
+ */
+/** */
 import {Service} from "../../di/decorators/service";
 import {ServerSettingsService} from "../../server/services/ServerSettings";
 import {$log} from "ts-log-debug";
@@ -5,7 +9,9 @@ import {getClass, getClassOrSymbol} from "../../core/utils";
 import {IFilter, IFilterProvider} from "../interfaces";
 import {EnvTypes, Type} from "../../core";
 import {InjectorService} from "../../di/services/InjectorService";
-
+/**
+ *
+ */
 @Service()
 export class FilterService {
 

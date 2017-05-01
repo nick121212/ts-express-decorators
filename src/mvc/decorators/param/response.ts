@@ -1,14 +1,14 @@
 /**
  * @module mvc
- */
+ */ /** */
 
 import {Type} from "../../../core/interfaces/Type";
 import {EndpointParam} from "../../class/EndpointParam";
-import {EXPRESS_RESPONSE} from "src/mvc/constants";
+import {EXPRESS_RESPONSE} from "../../constants/index";
 /**
  * Response service.
  * @returns {function(Function, (string|symbol), number): void}
- * @constructor
+ * @decorator
  */
 export function Response(): Function {
 

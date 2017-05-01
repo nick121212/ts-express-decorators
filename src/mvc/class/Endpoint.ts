@@ -1,6 +1,7 @@
 /**
  * @module mvc
  */
+/** */
 import {getClassName} from "../../core/utils";
 import {Metadata} from "../../core/class/Metadata";
 import {ENDPOINT_METHODS, ENDPOINT_USE, ENDPOINT_USE_AFTER, ENDPOINT_USE_BEFORE} from "../constants/index";

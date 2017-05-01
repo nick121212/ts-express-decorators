@@ -1,6 +1,6 @@
 /**
  * @module mvc
- */
+ */ /** */
 export * from "./ControllerRoute";
 export * from "./Crud";
 export * from "./InvokableScope";

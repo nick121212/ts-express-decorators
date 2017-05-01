@@ -1,6 +1,7 @@
 /**
  * @module core
  */
+/** */
 import "reflect-metadata";
 import {getClass} from "../utils";
 /**

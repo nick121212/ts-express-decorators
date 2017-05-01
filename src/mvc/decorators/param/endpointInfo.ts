@@ -8,7 +8,7 @@ import {ENDPOINT_INFO} from "../../constants/index";
 /**
  *
  * @returns {Function}
- * @constructor
+ * @decorator
  */
 export function EndpointInfo(): Function {
 

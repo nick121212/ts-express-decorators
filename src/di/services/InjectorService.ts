@@ -1,12 +1,12 @@
 /**
  * @module di
- */ /** */
-
-import {UNKNOW_SERVICE} from "../../core/constants/errors-msgs";
+ */
+/** */
 import {getClassName, getClassOrSymbol} from "../../core";
 import {Metadata} from "../../core/class/Metadata";
 import {IInjectableMethod} from "../interfaces/InjectableMethod";
 import {IProvider} from "../interfaces/Provider";
+import {InjectionError} from "../errors/InjectionError";
 
 /**
  * InjectorService manage all service collected by `@Service()` decorators.
@@ -81,8 +81,7 @@ export class InjectorService {
 
                 /* istanbul ignore next */
                 if (!this.has(serviceType)) {
-                    console.log(serviceType, target, serviceName);
-                    throw Error(UNKNOW_SERVICE(getClassName(target) + " > " + serviceName.toString()));
+                    throw new InjectionError(getClassName(target) + " > " + serviceName.toString());
                 }
 
                 return this.get(serviceType);

@@ -42,7 +42,7 @@ import {JSON_PROPERTIES} from "../constants/index";
  *
  * @param metadata
  * @returns {Function}
- * @constructor
+ * @decorator
  */
 export function JsonProperty<T>(metadata?: IJsonMetadata<T>|string): Function {
 

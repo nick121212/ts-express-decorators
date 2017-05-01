@@ -1,8 +1,12 @@
 /**
  * @module mvc
  */
+/** */
 import * as Express from "express";
 
+/**
+ * @deprecated
+ */
 export interface ICrud<T> {
     /**
      * Find one element in databse

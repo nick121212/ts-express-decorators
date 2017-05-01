@@ -1,7 +1,7 @@
 import {assert, expect} from "chai";
 import {BadRequest} from "ts-httpexceptions";
-import {inject} from "../../../src/testing/inject";
-import {ConverterService, JsonProperty} from "../../../src";
+import {inject} from "../../../../src/testing/inject";
+import {ConverterService, JsonProperty} from "../../../../src";
 
 class Foo {
 

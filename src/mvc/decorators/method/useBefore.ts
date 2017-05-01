@@ -6,10 +6,9 @@ import {Endpoint} from "../../class/Endpoint";
 /**
  * Use decorators.
  * @returns {function(any, any, any): *}
- * @constructor
  * @param args
+ * @decorator
  */
-
 export function UseBefore(...args: any[]): Function {
 
     return <T> (

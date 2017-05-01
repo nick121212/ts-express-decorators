@@ -1,9 +1,10 @@
 /**
  * @module mvc
- */
+ */ /** */
+
 import {getClassName, Metadata, Type} from "../../core";
 import {IInjectableParamSettings, IInjectableParamsMetadata, IParamArgs} from "../interfaces";
-import {EXPRESS_NEXT_FN, INJECT_PARAMS} from "../constants/index";
+import {ENDPOINT_INJECT_PARAMS, EXPRESS_NEXT_FN} from "../constants/index";
 /**
  *
  */
@@ -112,8 +113,8 @@ export class EndpointParam implements IInjectableParamsMetadata<any> {
      */
     static getParams(target: Type<any>, targetKey: string | symbol): EndpointParam[] {
 
-        return Metadata.has(INJECT_PARAMS, target, targetKey)
-            ? Metadata.get(INJECT_PARAMS, target, targetKey)
+        return Metadata.has(ENDPOINT_INJECT_PARAMS, target, targetKey)
+            ? Metadata.get(ENDPOINT_INJECT_PARAMS, target, targetKey)
             : [];
     }
 
@@ -126,13 +127,13 @@ export class EndpointParam implements IInjectableParamsMetadata<any> {
      */
     static set(target: Type<any>, targetKey: string | symbol, index: number, injectParams: EndpointParam): void {
 
-        const params = Metadata.has(INJECT_PARAMS, target, targetKey)
-            ? Metadata.get(INJECT_PARAMS, target, targetKey)
+        const params = Metadata.has(ENDPOINT_INJECT_PARAMS, target, targetKey)
+            ? Metadata.get(ENDPOINT_INJECT_PARAMS, target, targetKey)
             : [];
 
         params[index] = injectParams;
 
-        Metadata.set(INJECT_PARAMS, params, target, targetKey);
+        Metadata.set(ENDPOINT_INJECT_PARAMS, params, target, targetKey);
     }
 
     /**
@@ -141,7 +142,7 @@ export class EndpointParam implements IInjectableParamsMetadata<any> {
      * @param method
      */
     static isInjectable = (target, method): boolean =>
-    (Metadata.get(INJECT_PARAMS, target, method) || []).length > 0;
+    (Metadata.get(ENDPOINT_INJECT_PARAMS, target, method) || []).length > 0;
 
     /**
      *

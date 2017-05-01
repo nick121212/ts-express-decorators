@@ -1,6 +1,6 @@
 import {expect} from "chai";
-import {EndpointParam} from "../../../src";
-import {EXPRESS_REQUEST} from "src/mvc/constants";
+import {EndpointParam} from "../../../../src";
+import {EXPRESS_REQUEST} from "../../../../src/mvc/constants/index";
 
 class TestEndpointParam {
     method(arg1, arg2) {

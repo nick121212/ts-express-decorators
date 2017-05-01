@@ -1,3 +1,7 @@
+/**
+ * @module server
+ */ /** */
+
 import * as Https from "https";
 
 import {Env} from "../../core/interfaces/Env";

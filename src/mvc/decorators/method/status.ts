@@ -1,15 +1,19 @@
+/**
+ * @module mvc
+ */
+/** */
 import {UseAfter} from "./useAfter";
 /**
  * Sets the HTTP status for the response. It is a chainable alias of Node’s `response.statusCode`.
  *
  * ```typescript
- * \@Status(403)
- * private myMethod() {}
+ *  @Status(403)
+ *  private myMethod() {}
  * ```
  *
  * @param code
  * @returns {Function}
- * @constructor
+ * @decorator
  */
 export function Status(code: number): Function {
 

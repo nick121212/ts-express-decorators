@@ -1,8 +1,8 @@
 import {expect} from "chai";
-import {MiddlewareService} from "../../../src";
-import {inject} from "../../../src/testing/inject";
-import {SendResponseMiddleware} from "../../../src/mvc/components/SendResponseMiddleware";
-import {FakeResponse} from "../../helper/FakeResponse";
+import {MiddlewareService} from "../../../../src";
+import {inject} from "../../../../src/testing/inject";
+import {SendResponseMiddleware} from "../../../../src/mvc/components/SendResponseMiddleware";
+import {FakeResponse} from "../../../helper/FakeResponse";
 
 describe('SendResponseMiddleware :', () => {
 

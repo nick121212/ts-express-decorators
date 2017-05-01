@@ -4,11 +4,11 @@
 
 import {Type} from "../../../core/interfaces/Type";
 import {EndpointParam} from "../../class/EndpointParam";
-import {EXPRESS_ERR} from "src/mvc/constants";
+import {EXPRESS_ERR} from "../../constants/index";
 /**
  *
  * @returns {Function}
- * @constructor
+ * @decorator
  */
 export function Err(): Function {
 

@@ -1,8 +1,12 @@
 /**
  * @module mvc
  */
+/** */
 import * as Express from "express";
 
+/**
+ *
+ */
 export interface IInvokableScope {
     request: Express.Request;
     response: Express.Response;

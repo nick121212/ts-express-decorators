@@ -6,8 +6,8 @@ import {Endpoint} from "../../class/Endpoint";
 /**
  * Use decorators.
  * @returns {function(any, any, any): *}
- * @constructor
  * @param args
+ * @decorator
  */
 export function UseAfter(...args: any[]): Function {
 

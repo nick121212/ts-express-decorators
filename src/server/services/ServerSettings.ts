@@ -1,3 +1,7 @@
+/**
+ * @module server
+ */
+/** */
 import * as Path from "path";
 import * as Https from "https";
 import {IServerMountDirectories, IServerSettings} from "../interfaces/ServerSettings";

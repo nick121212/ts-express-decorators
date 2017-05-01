@@ -1,3 +1,7 @@
+/**
+ * @module mvc
+ */
+/** */
 import {UseBefore} from "./useBefore";
 import {Endpoint} from "../../class/Endpoint";
 import {AuthenticatedMiddleware} from "../../components/AuthenticatedMiddleware";
@@ -16,7 +20,7 @@ import {AuthenticatedMiddleware} from "../../components/AuthenticatedMiddleware"
  *
  * @param options
  * @returns {Function}
- * @constructor
+ * @decorator
  */
 export function Authenticated(options?: any): Function {
 

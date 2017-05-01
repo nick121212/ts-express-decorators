@@ -1,3 +1,7 @@
+/**
+ * @module filters
+ */
+/** */
 import {IProvider} from "../../di/interfaces/Provider";
 /**
  *

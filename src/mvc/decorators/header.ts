@@ -1,6 +1,7 @@
 /**
  * @module mvc
  */
+/** */
 import {HeaderParams} from "./param/params";
 import {UseAfter} from "./method/useAfter";
 
@@ -8,19 +9,19 @@ import {UseAfter} from "./method/useAfter";
  * Sets the response’s HTTP header field to value. To set multiple fields at once, pass an object as the parameter.
  *
  * ```typescript
- * \@Header('Content-Type', 'text/plain');
- * private myMethod() {}
- * \@Header({
- *   'Content-Type': 'text/plain',
- *   'Content-Length': '123',
- *   'ETag': '12345'
- * })
- * private myMethod() {}
+ *  @Header('Content-Type', 'text/plain');
+ *  private myMethod() {}
+ *  @Header({
+ *    'Content-Type': 'text/plain',
+ *    'Content-Length': '123',
+ *    'ETag': '12345'
+ *  })
+ *  private myMethod() {}
  * ```
  * @param expression
  * @param expressionValue
  * @returns {Function}
- * @constructor
+ * @decorator
  */
 export function Header(expression: string | {[key: string]: string}, expressionValue?: string) {
 

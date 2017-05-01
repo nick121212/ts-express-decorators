@@ -1,3 +1,7 @@
+/**
+ * @module mvc
+ */
+/** */
 import {UseBefore} from "./useBefore";
 import {Endpoint} from "../../class/Endpoint";
 import {AcceptMimesMiddleware} from "../../components/AcceptMimesMiddleware";
@@ -5,18 +9,18 @@ import {AcceptMimesMiddleware} from "../../components/AcceptMimesMiddleware";
  * Set a mime list as acceptable for a request on a specific endpoint.
  *
  * ```typescript
- * \@ControllerMetadata('/mypath')
- * class MyCtrl {
+ *  @ControllerMetadata('/mypath')
+ *  class MyCtrl {
  *
- *   \@Get('/')
- *   \@AcceptMime('application/json')
- *   public getResource(){}
- * }
+ *    @Get('/')
+ *    @AcceptMime('application/json')
+ *    public getResource(){}
+ *  }
  * ```
  *
  * @param mimes
  * @returns {Function}
- * @constructor
+ * @decorator
  */
 export function AcceptMime(...mimes: string[]): Function {
 

@@ -1,3 +1,7 @@
+/**
+ * @module server
+ */ /** */
+
 import {IServerSettings} from "../interfaces/ServerSettings";
 import {Metadata} from "../../core/class/Metadata";
 import {SERVER_SETTINGS} from "../constants/index";
@@ -5,7 +9,7 @@ import {SERVER_SETTINGS} from "../constants/index";
  *
  * @param settings
  * @returns {(target:any)=>any}
- * @constructor
+ * @decorator
  */
 export function ServerSettings(settings: IServerSettings): Function {
 

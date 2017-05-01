@@ -1,13 +1,13 @@
 import {assert, expect} from "chai";
-import {FakeClass, FakeClassChildren} from "../../helper";
+import {FakeClass, FakeClassChildren} from "../../../helper";
 
-import {inject} from "../../../src/testing/inject";
-import {ControllerService} from "../../../src/mvc/services/ControllerService";
-import {Metadata} from "../../../src/core/class/Metadata";
-import {Endpoint} from "../../../src/mvc/class/Endpoint";
+import {inject} from "../../../../src/testing/inject";
+import {ControllerService} from "../../../../src/mvc/services/ControllerService";
+import {Metadata} from "../../../../src/core/class/Metadata";
+import {Endpoint} from "../../../../src/mvc/class/Endpoint";
 import {
     CONTROLLER_DEPEDENCIES, CONTROLLER_MOUNT_ENDPOINTS, CONTROLLER_URL, ENDPOINT_USE
-} from "../../../src/mvc/constants/index";
+} from "../../../../src/mvc/constants/index";
 
 describe("ControllerMetadata & ControllerService :", () => {
 
@@ -175,10 +175,10 @@ describe("ControllerMetadata & ControllerService :", () => {
             expect(fakeClassEndpoints[1].getRoute()).to.equal("/");
 
             expect(routes).to.be.an("array");
-            expect(routes.length).to.equal(4);
-            expect(routes[0].method).to.equal("get");
-            expect(routes[0].url).to.equal("/rest/fake-class/");
-            expect(routes[1].method).to.equal("post");
+            expect(routes.length).to.equal(28);
+            expect(routes[23].method).to.equal("get");
+            expect(routes[23].url).to.equal("/rest/fake-class/");
+            expect(routes[24].method).to.equal("post");
 
             let str = "";
             controllerService.printRoutes({info: (p) => (str += p)});
