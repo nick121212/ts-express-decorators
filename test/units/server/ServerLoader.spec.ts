@@ -1,5 +1,30 @@
 import * as Proxyquire from "proxyquire";
-const {ServerLoader} = Proxyquire("../../../src/server/components/ServerLoader", {});
+import {Sinon} from "../../tools";
+import {ServerSettings} from "../../../src/server/decorators/serverSettings";
+const {ServerLoader} = Proxyquire("../../../src/server/components/ServerLoader", {
+    "http": {},
+    "https": {}
+});
+
+
+describe("ServerLoader", () => {
+    before(() => {
+        class TestServer extends ServerLoader {
+
+        }
+        this.getMetadataStub = Sinon.stub(ServerSettings, "getMetadata");
+        this.getMetadataStub.returns({});
+
+        this.server = new TestServer();
+    });
+    after(() => {
+        this.getMetadataStub.restore();
+    });
+
+    it("start()", () => {
+
+    });
+});
 
 
 // import {assert, expect} from "chai";
