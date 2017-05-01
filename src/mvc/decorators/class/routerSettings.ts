@@ -2,19 +2,19 @@
  * @module mvc
  */
 /** */
-import {Metadata} from "../../../core/class/Metadata";
-import {CONTROLLER_ROUTER_OPTIONS} from "../../constants/index";
+import {ControllerRegistry} from "../../registries/ControllerRegistry";
+import {IRouterOptions} from "../../interfaces/ControllerOptions";
 /**
  *
  * @param options
  * @returns {(target:any)=>void}
  * @decorator
  */
-export function RouterSettings(options: { caseSensitive?: boolean, mergeParams?: boolean, strict?: boolean }): Function {
+export function RouterSettings(routerOptions: IRouterOptions): Function {
 
     return (target: any): void => {
 
-        Metadata.set(CONTROLLER_ROUTER_OPTIONS, Object.assign(options || {}, {}), target);
+        ControllerRegistry.merge(target, {routerOptions});
 
     };
 }

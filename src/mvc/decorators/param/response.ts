@@ -3,8 +3,8 @@
  */ /** */
 
 import {Type} from "../../../core/interfaces/Type";
-import {EndpointParam} from "../../class/EndpointParam";
 import {EXPRESS_RESPONSE} from "../../constants/index";
+import {ParamsRegistry} from "../../registries/ParamsRegistry";
 /**
  * Response service.
  * @returns {function(Function, (string|symbol), number): void}
@@ -16,7 +16,7 @@ export function Response(): Function {
 
         if (typeof parameterIndex === "number") {
 
-            EndpointParam.useService(EXPRESS_RESPONSE, {
+            ParamsRegistry.useService(EXPRESS_RESPONSE, {
                 target,
                 propertyKey,
                 parameterIndex

@@ -5,16 +5,21 @@
     "target": "es5",
     "noImplicitAny": false,
     "sourceMap": true,
-    "declaration":false,
-    "experimentalDecorators":true,
+    "declaration": false,
+    "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "moduleResolution": "node",
     "isolatedModules": false,
     "suppressImplicitAnyIndexErrors": false,
-    "lib": ["es6", "dom"],
-    "types":[
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "types": [
       "node",
       "chai",
+      "sinon",
+      "sinon-chai",
       "mocha",
       "cookie-parser",
       "express",
@@ -22,7 +27,6 @@
       "supertest"
     ]
   },
-
   "exclude": [
     "node_modules",
     "dts",

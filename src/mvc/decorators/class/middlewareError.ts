@@ -3,7 +3,7 @@
  */
 /** */
 import {MiddlewareType} from "../../interfaces";
-import {MiddlewareService} from "../../services/MiddlewareService";
+import {MiddlewareRegistry} from "../../registries/MiddlewareRegistry";
 /**
  *
  * @returns {(target:any)=>void}
@@ -13,7 +13,7 @@ export function MiddlewareError(): Function {
 
     return (target: any): void => {
 
-        MiddlewareService.set(target, MiddlewareType.ERROR);
+        MiddlewareRegistry.merge(target, {type: MiddlewareType.ERROR});
 
         return target;
     };

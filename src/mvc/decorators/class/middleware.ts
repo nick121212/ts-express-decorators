@@ -2,8 +2,8 @@
  * @module mvc
  */
 /** */
-import {MiddlewareService} from "../../services/MiddlewareService";
 import {MiddlewareType} from "../../interfaces/index";
+import {MiddlewareRegistry} from "../../registries/MiddlewareRegistry";
 /**
  *
  * @returns {(target:any)=>void}
@@ -13,7 +13,7 @@ export function Middleware(): Function {
 
     return (target: any): void => {
 
-        MiddlewareService.set(target, MiddlewareType.MIDDLEWARE);
+        MiddlewareRegistry.merge(target, {type: MiddlewareType.MIDDLEWARE});
 
         return target;
     };

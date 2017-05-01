@@ -4,10 +4,10 @@ import {inject} from "../../../../src/testing/inject";
 import {SendResponseMiddleware} from "../../../../src/mvc/components/SendResponseMiddleware";
 import {FakeResponse} from "../../../helper/FakeResponse";
 
-describe('SendResponseMiddleware :', () => {
+describe("SendResponseMiddleware :", () => {
 
 
-    it('should send response (boolean)', inject([MiddlewareService], (middlewareService: MiddlewareService) => {
+    it("should send response (boolean)", inject([MiddlewareService], (middlewareService: MiddlewareService) => {
         const fakeResponse = new FakeResponse();
         const middleware = middlewareService.invoke<SendResponseMiddleware>(SendResponseMiddleware);
 
@@ -15,11 +15,11 @@ describe('SendResponseMiddleware :', () => {
 
         middleware.use(true, fakeResponse as any);
 
-        expect(fakeResponse._body).to.be.a('string');
-        expect(fakeResponse._body).to.equal('true');
+        expect(fakeResponse._body).to.be.a("string");
+        expect(fakeResponse._body).to.equal("true");
     }));
 
-    it('should send response (number)', inject([MiddlewareService], (middlewareService: MiddlewareService) => {
+    it("should send response (number)", inject([MiddlewareService], (middlewareService: MiddlewareService) => {
         const fakeResponse = new FakeResponse();
         const middleware = middlewareService.invoke<SendResponseMiddleware>(SendResponseMiddleware);
 
@@ -27,11 +27,11 @@ describe('SendResponseMiddleware :', () => {
 
         middleware.use(1, fakeResponse as any);
 
-        expect(fakeResponse._body).to.be.a('string');
-        expect(fakeResponse._body).to.equal('1');
+        expect(fakeResponse._body).to.be.a("string");
+        expect(fakeResponse._body).to.equal("1");
     }));
 
-    it('should send response (null)', inject([MiddlewareService], (middlewareService: MiddlewareService) => {
+    it("should send response (null)", inject([MiddlewareService], (middlewareService: MiddlewareService) => {
         const fakeResponse = new FakeResponse();
         const middleware = middlewareService.invoke<SendResponseMiddleware>(SendResponseMiddleware);
 
@@ -39,11 +39,11 @@ describe('SendResponseMiddleware :', () => {
 
         middleware.use(null, fakeResponse as any);
 
-        expect(fakeResponse._body).to.be.a('string');
-        expect(fakeResponse._body).to.equal('null');
+        expect(fakeResponse._body).to.be.a("string");
+        expect(fakeResponse._body).to.equal("null");
     }));
 
-    it('should send response (date)', inject([MiddlewareService], (middlewareService: MiddlewareService) => {
+    it("should send response (date)", inject([MiddlewareService], (middlewareService: MiddlewareService) => {
         const fakeResponse = new FakeResponse();
         const date = new Date();
         const middleware = middlewareService.invoke<SendResponseMiddleware>(SendResponseMiddleware);
@@ -52,13 +52,13 @@ describe('SendResponseMiddleware :', () => {
 
         middleware.use(date, fakeResponse as any);
 
-        expect(fakeResponse._body).to.be.a('string');
-        expect(fakeResponse._headers).to.contains('Content-Type:text/json');
+        expect(fakeResponse._body).to.be.a("string");
+        expect(fakeResponse._headers).to.contains("Content-Type:text/json");
         expect(fakeResponse._body).to.equal(JSON.stringify(date));
 
     }));
 
-    it('should send nothing (undefined)', inject([MiddlewareService], (middlewareService: MiddlewareService) => {
+    it("should send nothing (undefined)", inject([MiddlewareService], (middlewareService: MiddlewareService) => {
         const fakeResponse = new FakeResponse();
         const middleware = middlewareService.invoke<SendResponseMiddleware>(SendResponseMiddleware);
 
@@ -66,24 +66,24 @@ describe('SendResponseMiddleware :', () => {
 
         middleware.use(undefined, fakeResponse as any);
 
-        expect(fakeResponse._body).to.equal('');
+        expect(fakeResponse._body).to.equal("");
 
     }));
 
-    it('should send nothing (headersSent)', inject([MiddlewareService], (middlewareService: MiddlewareService) => {
+    it("should send nothing (headersSent)", inject([MiddlewareService], (middlewareService: MiddlewareService) => {
         const fakeResponse = new FakeResponse();
         const middleware = middlewareService.invoke<SendResponseMiddleware>(SendResponseMiddleware);
-        fakeResponse['headersSent'] = true;
+        fakeResponse["headersSent"] = true;
 
         expect(middleware).not.to.be.undefined;
 
         middleware.use(true, fakeResponse as any);
 
-        expect(fakeResponse._body).to.equal('');
+        expect(fakeResponse._body).to.equal("");
 
     }));
 
-    it('should send response (object)', inject([MiddlewareService], (middlewareService: MiddlewareService) => {
+    it("should send response (object)", inject([MiddlewareService], (middlewareService: MiddlewareService) => {
         const fakeResponse = new FakeResponse();
         const middleware = middlewareService.invoke<SendResponseMiddleware>(SendResponseMiddleware);
         const obj = {};
@@ -92,8 +92,8 @@ describe('SendResponseMiddleware :', () => {
 
         middleware.use(obj, fakeResponse as any);
 
-        expect(fakeResponse._body).to.be.a('string');
-        expect(fakeResponse._headers).to.contains('Content-Type:text/json');
+        expect(fakeResponse._body).to.be.a("string");
+        expect(fakeResponse._headers).to.contains("Content-Type:text/json");
         expect(fakeResponse._body).to.equal(JSON.stringify(obj));
 
     }));

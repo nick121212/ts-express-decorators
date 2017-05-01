@@ -1,5 +1,10 @@
 import {JsonProperty} from "../../../src";
 
+export class Task {
+    public name: string = void 0;
+    public percent: number;
+}
+
 export class EventModel {
 
     @JsonProperty()
@@ -16,7 +21,3 @@ export class EventModel {
 
 }
 
-export class Task {
-    public name: string = void 0;
-    public percent: number;
-}

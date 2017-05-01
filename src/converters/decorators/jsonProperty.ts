@@ -4,17 +4,17 @@
 /** */
 import {Metadata} from "../../core/class/Metadata";
 import {InjectorService} from "../../di/services/InjectorService";
-import {isCollection, isEmpty, isTargetType} from "../../core/utils/index";
+import {isCollection, isEmpty} from "../../core/utils/index";
 import {ConverterService} from "../services/ConverterService";
 import {IJsonMetadata} from "../interfaces/index";
 import {JSON_PROPERTIES} from "../constants/index";
 /**
  * `@JsonProperty()` let you decorate an attribut that can be serialized or deserialized. By default, no parameters are required to use it.
- * But in some cases, we need to configure explicitly the JSON attribut name mapped to the class attribut.
+ * But in some cases, we need to configure explicitly the JSON attribut name mapped to the provide attribut.
  * Here an example of different use cases with `@JsonProperty()`:
  *
  * ```typescript
- * class EventModel {
+ * provide EventModel {
  *
  *    \@JsonProperty()
  *    name: string;
@@ -29,7 +29,7 @@ import {JSON_PROPERTIES} from "../constants/index";
  *    tasks: TaskModel[];
  * }
  *
- * class TaskModel {
+ * provide TaskModel {
  *     subject: string;
  *     rate: number;
  * }
@@ -58,10 +58,10 @@ export function JsonProperty<T>(metadata?: IJsonMetadata<T>|string): Function {
                 baseType: baseType
             };
 
-            if (isTargetType(metadata, "string")) {
+            if (typeof metadata === "string") {
                 decoratorMetaData.name = metadata as string;
             }
-            else if (isTargetType(metadata, "object")) {
+            else if (typeof metadata === "object") {
 
                 decoratorMetaData = Object.assign(decoratorMetaData, metadata as IJsonMetadata<T>);
 

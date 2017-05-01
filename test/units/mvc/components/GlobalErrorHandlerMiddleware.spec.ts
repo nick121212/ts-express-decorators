@@ -1,73 +1,160 @@
-import {expect} from "chai";
+import {assert, expect} from "chai";
+import {$log} from "ts-log-debug";
 import {inject} from "../../../../src/testing/inject";
 import {GlobalErrorHandlerMiddleware, MiddlewareService} from "../../../../src";
 import {FakeResponse} from "../../../helper/FakeResponse";
 import {FakeRequest} from "../../../helper/FakeRequest";
-import {$log} from "ts-log-debug";
+import * as Sinon from "sinon";
+import {BadRequest} from "ts-httpexceptions/lib";
 
 
-describe("GlobalErrorHandlerMiddleware :", () => {
-
-    it("should do nothing if response is sent", inject([MiddlewareService], (middlewareService: MiddlewareService) => {
-
-        const middleware = middlewareService.invoke<GlobalErrorHandlerMiddleware>(GlobalErrorHandlerMiddleware);
-
-        const response = new FakeResponse();
-        response["headersSent"] = true;
-
-        middleware.use(
-            new Error("test"),
-            new FakeRequest() as any,
-            response as any,
-            () => ({})
-        );
-
-        expect(response._body).is.equal("");
-
+describe("GlobalErrorHandlerMiddleware", () => {
+    before(inject([MiddlewareService], (middlewareService: MiddlewareService) => {
+        this.middleware = middlewareService.invoke<GlobalErrorHandlerMiddleware>(GlobalErrorHandlerMiddleware);
     }));
 
-    it("should respond error 404 with his message", inject([MiddlewareService], (middlewareService: MiddlewareService) => {
+    after(() => {
+        delete this.middleware;
+    });
 
-        const middleware = middlewareService.invoke<GlobalErrorHandlerMiddleware>(GlobalErrorHandlerMiddleware);
-        const response = new FakeResponse();
-        response["headersSent"] = false;
+    describe("use()", () => {
 
-        middleware.use(
-            "Message not found",
-            new FakeRequest() as any,
-            response as any,
-            () => ({})
-        );
-
-        expect(response._body).is.equal("Message not found");
-        expect(response._status).is.equal(404);
-
-    }));
-
-    it("should respond error 500 and Internal Error", inject([MiddlewareService], (middlewareService: MiddlewareService) => {
-
-        $log.setRepporting({
-            error: false
+        before(() => {
+            this.response = new FakeResponse();
+            this.request = new FakeRequest();
+            $log.setRepporting({error: false});
         });
 
-        const middleware = middlewareService.invoke<GlobalErrorHandlerMiddleware>(GlobalErrorHandlerMiddleware);
-
-        const response = new FakeResponse();
-        response["headersSent"] = false;
-
-        middleware.use(
-            new Error(),
-            new FakeRequest() as any,
-            response as any,
-            () => ({})
-        );
-
-        expect(response._body).is.equal("Internal Error");
-        expect(response._status).is.equal(500);
-
-        $log.setRepporting({
-            error: true
+        after(() => {
+            delete this.response;
+            delete this.request;
+            $log.setRepporting({error: true});
         });
 
-    }));
+        describe("headerSent", () => {
+            before(() => {
+                this.response["headersSent"] = true;
+                this.error = new Error("test");
+                this.nextSpy = Sinon.stub();
+
+                this.middleware.use(
+                    this.error,
+                    this.responseStub,
+                    this.response,
+                    this.nextSpy
+                );
+            });
+
+            after(() => {
+                delete this.error;
+                delete this.nextSpy;
+            });
+
+            it("should have called next function", () => {
+                assert(this.nextSpy.calledWith(this.error));
+            });
+
+            it("should have an empty body", () => {
+                expect(this.response._body).is.equal("");
+            });
+        });
+
+        describe("instanceof Exception", () => {
+            before(() => {
+                this.response["headersSent"] = false;
+                this.error = new BadRequest("test");
+                this.nextSpy = Sinon.stub();
+
+                this.middleware.use(
+                    this.error,
+                    this.responseStub,
+                    this.response,
+                    this.nextSpy
+                );
+            });
+
+            after(() => {
+                delete this.error;
+                delete this.nextSpy;
+            });
+
+            it("should have called next function", () => {
+                assert(this.nextSpy.calledWith());
+            });
+
+            it("should have a message body", () => {
+                expect(this.response._body).is.equal("test");
+            });
+
+            it("should have a status", () => {
+                expect(this.response._status).is.equal(this.error.status);
+            });
+        });
+
+        describe("Error as string", () => {
+            before(() => {
+                this.response["headersSent"] = false;
+                this.error = "message";
+                this.nextSpy = Sinon.stub();
+
+                this.middleware.use(
+                    this.error,
+                    this.responseStub,
+                    this.response,
+                    this.nextSpy
+                );
+            });
+
+            after(() => {
+                delete this.error;
+                delete this.nextSpy;
+            });
+
+            it("should have called next function", () => {
+                assert(this.nextSpy.calledWith());
+            });
+
+            it("should have an empty body", () => {
+                expect(this.response._body).is.equal("message");
+            });
+
+            it("should have a status", () => {
+                expect(this.response._status).is.equal(404);
+            });
+        });
+
+        describe("InternalServerError", () => {
+            before(() => {
+                this.response["headersSent"] = false;
+                this.error = new Error("test");
+                this.nextSpy = Sinon.stub();
+
+                this.middleware.use(
+                    this.error,
+                    this.responseStub,
+                    this.response,
+                    this.nextSpy
+                );
+            });
+
+            after(() => {
+                delete this.error;
+                delete this.nextSpy;
+            });
+
+            it("should have called next function", () => {
+                assert(this.nextSpy.calledWith());
+            });
+
+            it("should have an empty body", () => {
+                expect(this.response._body).is.equal("Internal Error");
+            });
+
+            it("should have a status", () => {
+                expect(this.response._status).is.equal(500);
+            });
+        });
+    });
+
+
 });

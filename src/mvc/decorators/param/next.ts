@@ -3,8 +3,8 @@
  */ /** */
 
 import {Type} from "../../../core/interfaces/Type";
-import {EndpointParam} from "../../class/EndpointParam";
 import {EXPRESS_NEXT_FN} from "../../constants/index";
+import {ParamsRegistry} from "../../registries/ParamsRegistry";
 /**
  *
  * @returns {function(Function, (string|symbol), number): void}
@@ -16,7 +16,7 @@ export function Next(): Function {
 
         if (typeof parameterIndex === "number") {
 
-            EndpointParam.useService(EXPRESS_NEXT_FN, {
+            ParamsRegistry.useService(EXPRESS_NEXT_FN, {
                 target,
                 propertyKey,
                 parameterIndex

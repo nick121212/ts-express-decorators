@@ -2,21 +2,23 @@
  * @module di
  */
 /** */
-import {getClassName, getClassOrSymbol} from "../../core";
+import {nameOf} from "../../core";
 import {Metadata} from "../../core/class/Metadata";
 import {IInjectableMethod} from "../interfaces/InjectableMethod";
 import {IProvider} from "../interfaces/Provider";
 import {InjectionError} from "../errors/InjectionError";
+import {ProviderRegistry, ProxyProviderRegistry} from "../registries/ProviderRegistry";
+import {Type} from "../../core/interfaces/Type";
+import {Provider} from "../class/Provider";
+import {Registry} from "../../core/class/Registry";
 
 /**
  * InjectorService manage all service collected by `@Service()` decorators.
  */
-export class InjectorService {
-
-    private static providers: Map<Function, any> = new Map<Function, any>();
+export class InjectorService extends ProxyProviderRegistry {
 
     /**
-     * Invoke the target class or function.
+     * Invoke the target provide or function.
      * @param target
      * @param locals
      * @param designParamTypes
@@ -40,26 +42,17 @@ export class InjectorService {
      * @param target
      * @returns {boolean}
      */
-    public get<T>(target: any): T {
-        return InjectorService.get<T>(target);
+    public get<T>(target: Type<T> | symbol): T {
+        return super.get(target).instance;
     }
 
     /**
-     * Return true if the target provider exists and has an instance.
-     * @param target
-     * @returns {boolean}
-     */
-    public has(target): boolean {
-        return InjectorService.has(target);
-    }
-
-    /**
-     * Invoke the target class or function.
+     * Invoke the target provide or function.
      * @param target
      * @param locals
      * @param designParamTypes
      */
-    static invoke<T>(target: any, locals: Map<string|Function, any> = new Map<Function, any>(), designParamTypes?: any[]): T {
+    static invoke<T>(target: any, locals: Map<string | Function, any> = new Map<Function, any>(), designParamTypes?: any[]): T {
 
         if (!designParamTypes) {
             designParamTypes = Metadata.getParamTypes(target);
@@ -68,7 +61,7 @@ export class InjectorService {
         const services = designParamTypes
             .map((serviceType: any) => {
 
-                const serviceName = typeof serviceType === "function" ? getClassName(serviceType) : serviceType;
+                const serviceName = typeof serviceType === "function" ? nameOf(serviceType) : serviceType;
 
                 /* istanbul ignore next */
                 if (locals.has(serviceName)) {
@@ -81,7 +74,7 @@ export class InjectorService {
 
                 /* istanbul ignore next */
                 if (!this.has(serviceType)) {
-                    throw new InjectionError(getClassName(target) + " > " + serviceName.toString());
+                    throw new InjectionError(target, serviceName.toString());
                 }
 
                 return this.get(serviceType);
@@ -124,7 +117,7 @@ export class InjectorService {
         const services = designParamTypes
             .map((serviceType: any) => {
 
-                const serviceName = typeof serviceType === "function" ? getClassName(serviceType) : serviceType;
+                const serviceName = typeof serviceType === "function" ? nameOf(serviceType) : serviceType;
 
                 /* istanbul ignore next */
                 if (locals.has(serviceName)) {
@@ -151,29 +144,35 @@ export class InjectorService {
      * Construct the service with his dependencies.
      * @param target The service to be built.
      */
-    static construct(target): InjectorService {
+    static construct<T>(target: Type<any> | symbol): T {
 
-        const provider: IProvider<any> = this.providers.get(getClassOrSymbol(target));
+        const provider: Provider<any> = ProviderRegistry.get(target);
 
         /* istanbul ignore else */
-        if (provider.instance === undefined || provider.type === "service") {
+        return this.invoke<any>(provider.useClass);
+    }
 
-            provider.instance = this.invoke<any>(provider.useClass);
+    /**
+     *
+     * @param registry
+     * @param callback
+     */
+    static buildRegistry(registry: Registry<Provider<any>, any>, callback: (provider: Provider<any>) => boolean = () => true): Registry<Provider<any>, any> {
+        registry.forEach(provider => {
+            if (callback(provider)) {
+                provider.instance = InjectorService.invoke(provider.useClass);
+            }
+        });
 
-            // $log.debug("[TSED]", getClassName(target), "instantiated");
-        }
-
-
-        return this;
+        return registry;
     }
 
     /**
      * Set a new provider from providerSetting.
-     * @param provider class token.
+     * @param provider provide token.
      * @param instance Instance
      */
-    static set(provider: IProvider<any> | any, instance?: any): InjectorService {
-
+    static set(provider: IProvider<any> | any, instance?: any) {
         let target;
 
         if (provider["provide"] === undefined) {
@@ -191,12 +190,7 @@ export class InjectorService {
             target = provider.provide;
         }
 
-        provider = Object.assign(
-            InjectorService.providers.get(getClassOrSymbol(target)) || {},
-            provider
-        );
-
-        InjectorService.providers.set(getClassOrSymbol(target), provider);
+        ProviderRegistry.merge(provider.provide, provider);
 
         return InjectorService;
     }
@@ -207,7 +201,7 @@ export class InjectorService {
      * @returns {boolean}
      */
     static get = <T>(target: any): T =>
-        InjectorService.providers.get(getClassOrSymbol(target)).instance;
+        ProviderRegistry.get(target).instance;
 
     /**
      * Return true if the target provider exists and has an instance.
@@ -215,28 +209,27 @@ export class InjectorService {
      * @returns {boolean}
      */
     static has = (target: any): boolean =>
-    InjectorService.providers.has(getClassOrSymbol(target)) && !!InjectorService.get(target);
+        ProviderRegistry.has(target);
 
     /**
      * Initialize injectorService and load all services/factories.
      */
     static load() {
 
-        this.providers
+        InjectorService.buildRegistry(
+            ProviderRegistry,
+            (provider) => provider.instance === undefined || provider.type === "service"
+        )
             .forEach((provider: IProvider<any>) => {
-                InjectorService.construct(provider.provide);
+
+                const service = InjectorService.get<{ $afterServicesInit: Function }>(provider.provide);
+
+                if (service.$afterServicesInit) {
+                    service.$afterServicesInit();
+                }
+
             });
 
-
-        this.providers.forEach((provider: IProvider<any>) => {
-
-            const service = InjectorService.get<{$afterServicesInit: Function}>(provider.provide);
-
-            if (service.$afterServicesInit) {
-                service.$afterServicesInit();
-            }
-
-        });
     }
 
     /**

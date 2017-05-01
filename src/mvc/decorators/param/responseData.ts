@@ -3,8 +3,8 @@
  */ /** */
 
 import {Type} from "../../../core/interfaces/Type";
-import {EndpointParam} from "../../class/EndpointParam";
 import {RESPONSE_DATA} from "../../constants/index";
+import {ParamsRegistry} from "../../registries/ParamsRegistry";
 /**
  *
  * @returns {function(Function, (string|symbol), number): void}
@@ -14,10 +14,9 @@ export function ResponseData(): Function {
 
     return (target: Type<any>, propertyKey: string | symbol, parameterIndex: number): void => {
 
-        /* istanbul ignore else */
-        if (parameterIndex !== undefined) {
+        if (typeof parameterIndex === "number") {
 
-            EndpointParam.useService(RESPONSE_DATA, {
+            ParamsRegistry.useService(RESPONSE_DATA, {
                 propertyKey,
                 parameterIndex,
                 target

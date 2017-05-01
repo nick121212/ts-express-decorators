@@ -1,61 +1,39 @@
 import {assert, expect} from "chai";
-
-import {MiddlewareService} from "../../../../src/mvc/services/MiddlewareService";
 import {inject} from "../../../../src/testing/inject";
 import {GlobalAcceptMimesMiddleware} from "../../../../src/mvc/components/GlobalAcceptMimesMiddleware";
 import {FakeRequest} from "../../../helper/FakeRequest";
 import {ServerSettingsService} from "../../../../src";
 
-describe("GlobalAcceptMimesMiddleware :", () => {
+describe("GlobalAcceptMimesMiddleware", () => {
 
-    it("should accept mime", inject([MiddlewareService], (middlewareService: MiddlewareService) => {
+    before(inject([], () => {
 
         const map = new Map<string, any>();
         map.set("acceptMimes", ["application/json"]);
 
-        const middleware = new GlobalAcceptMimesMiddleware(new ServerSettingsService(map));
-        const request = new FakeRequest();
-
-        request.mime = "application/json";
-
-        middleware.use(request);
-
+        this.middleware = new GlobalAcceptMimesMiddleware(new ServerSettingsService(map));
+        this.request = new FakeRequest();
     }));
 
-    /*it('should accept mime', inject([MiddlewareService], (middlewareService: MiddlewareService) => {
+    describe("accept", () => {
+        before(() => {
+            this.request.mime = "application/json";
+        });
+        it("should return nothing", () => {
+            expect(this.middleware.use(this.request)).to.eq(undefined);
+        });
+    });
 
-     const middleware = middlewareService.invoke<AcceptMimeMiddleware>(AcceptMimeMiddleware);
-     const request = new FakeRequest();
+    describe("not accept", () => {
+        before(() => {
+            this.request.mime = "text/html";
+        });
 
-     request.mime = "application/json";
-
-     middleware.use({
-     getMetadata: () => {
-     return undefined
-     }
-     } as any, request as any);
-
-     }));*/
-
-    it("should not accept mime", inject([MiddlewareService], (middlewareService: MiddlewareService) => {
-
-        try {
-
-            const map = new Map<string, any>();
-            map.set("acceptMimes", ["application/xml"]);
-
-            const middleware = new GlobalAcceptMimesMiddleware(new ServerSettingsService(map));
-            const request = new FakeRequest();
-
-            request.mime = "text/html";
-
-            middleware.use(request);
-
-        } catch (er) {
-            expect(er.message).contains("You must accept content-type application/xml");
-        }
-
-
-    }));
+        it("should throws NotAcceptable", () => {
+            assert.throws(() => {
+                this.middleware.use(this.request);
+            }, "You must accept content-type application/json");
+        });
+    });
 
 });

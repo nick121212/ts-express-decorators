@@ -2,15 +2,18 @@
  * @module mvc
  */
 /** */
-import {Metadata} from "../../../core/class/Metadata";
-import {CONTROLLER_DEPEDENCIES, CONTROLLER_URL} from "../../constants/index";
+import {ControllerRegistry} from "../../registries/ControllerRegistry";
+import {IControllerOptions} from "../../interfaces/ControllerOptions";
+import {Type} from "../../../core/interfaces/Type";
+import {PathParamsType} from "../../interfaces/PathParamsType";
+import {isArrayOrArrayClass} from "../../../core/utils/index";
 /**
  * Declare a new controller with his Rest path. His methods annotated will be collected to build the routing list.
  * This routing listing will be built with the `express.Router` object.
  *
  * ```typescript
  *  @Controller("/calendars")
- *  export class CalendarCtrl {
+ *  export provide CalendarCtrl {
  *
  *    @Get("/:id")
  *    public get(
@@ -23,21 +26,22 @@ import {CONTROLLER_DEPEDENCIES, CONTROLLER_URL} from "../../constants/index";
  *  }
  * ```
  *
- * @param ctrlUrl
- * @param ctlrDepedencies
+ * @param path
+ * @param dependencies
  * @returns {Function}
  * @decorator
  */
-export function Controller(ctrlUrl: string, ...ctlrDepedencies: any[]): Function {
+export function Controller(path: PathParamsType | IControllerOptions, ...dependencies: Type<any>[]): Function {
 
     return (target: any): void => {
 
-        /* istanbul ignore next */
-        if (!Metadata.has(CONTROLLER_URL, target)) {
-            Metadata.set(CONTROLLER_URL, ctrlUrl, target);
-            Metadata.set(CONTROLLER_DEPEDENCIES, ctlrDepedencies, target);
-        }
+        // Metadata.set("IS_CLASS", true, target);
 
+        if (typeof path === "string" || path instanceof RegExp || isArrayOrArrayClass(path)) {
+            ControllerRegistry.merge(target, {path: (path as PathParamsType), dependencies});
+        } else {
+            ControllerRegistry.merge(target, path);
+        }
     };
 }
 

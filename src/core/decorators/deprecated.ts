@@ -2,11 +2,12 @@
  * @module core
  */ /** */
 
+import {Type} from "../interfaces/Type";
 /**
  * The `@Deprecated()` decorators wraps the given method in such a way that it is marked as deprecated.
  *
  * ```typescript
- * class Foo {
+ * provide Foo {
  *
  * \@Deprecated("Foo.method: Use Foo.method2 instead")
  * public method() {
@@ -33,9 +34,9 @@
  * @returns {Function}
  * @constructor
  */
-export function Deprecated(message: string) {
+export function Deprecated(message: string): Function {
 
-    return (target: any, targetKey: string, descriptor) => {
+    return (target: Type<any>, targetKey: string, descriptor) => {
 
         const originalMethod = descriptor.value;
 

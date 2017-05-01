@@ -3,14 +3,14 @@
  */
 /** */
 import {UseBefore} from "./useBefore";
-import {Endpoint} from "../../class/Endpoint";
 import {AuthenticatedMiddleware} from "../../components/AuthenticatedMiddleware";
+import {EndpointRegistry} from "../../registries/EndpointRegistry";
 /**
  * Set authentification strategy on your endpoint.
  *
  * ```typescript
- * \@ControllerMetadata('/mypath')
- * class MyCtrl {
+ * \@ControllerProvider('/mypath')
+ * provide MyCtrl {
  *
  *   \@Get('/')
  *   \@Authenticated({role: 'admin'})
@@ -27,7 +27,7 @@ export function Authenticated(options?: any): Function {
 
     return <T> (target: Function, targetKey: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> => {
 
-        Endpoint.setMetadata(AuthenticatedMiddleware, options, target, targetKey);
+        EndpointRegistry.setMetadata(AuthenticatedMiddleware, options, target, targetKey);
 
         return UseBefore(AuthenticatedMiddleware)(target, targetKey, descriptor);
     };

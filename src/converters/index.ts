@@ -10,7 +10,7 @@ export * from "./decorators/jsonProperty";
 
 // services
 export * from "./services/ConverterService";
-// components
+// filters
 import "./components/PrimitiveConverter";
 import "./components/SymbolConverter";
 import "./components/ArrayConverter";

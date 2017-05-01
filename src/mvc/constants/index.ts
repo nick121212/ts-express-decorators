@@ -7,25 +7,7 @@
  * @private
  * @type {string}
  */
-export const ENDPOINT_USE = "tsed:endpoint:use";
-/**
- * Metadata key
- * @private
- * @type {string}
- */
-export const ENDPOINT_USE_BEFORE = "tsed:endpoint:use:before";
-/**
- * Metadata key
- * @private
- * @type {string}
- */
-export const ENDPOINT_USE_AFTER = "tsed:endpoint:use:after";
-/**
- * Metadata key
- * @private
- * @type {string}
- */
-export const ENDPOINT_INJECT_PARAMS = "tsed:inject:params";
+export const PARAM_METADATA = "tsed:inject:params";
 /**
  * Express methods
  * @private
@@ -44,36 +26,6 @@ export const ENDPOINT_METHODS = [
     "unsuscribe"
 ];
 
-/**
- * Metadata key
- * @private
- * @type {string}
- */
-export const CONTROLLER_URL = "tsed:controller:url";
-/**
- * Metadata key
- * @private
- * @type {string}
- */
-export const CONTROLLER_DEPEDENCIES = "ted:controller:dependencies";
-/**
- * Metadata key
- * @private
- * @type {string}
- */
-export const CONTROLLER_SCOPE = "ted:controller:scope";
-/**
- * Metadata key
- * @private
- * @type {string}
- */
-export const CONTROLLER_ROUTER_OPTIONS = "ted:controller:router:options";
-/**
- * Metadata key
- * @private
- * @type {string}
- */
-export const CONTROLLER_MOUNT_ENDPOINTS = "ted:controller:endpoints";
 /**
  * Metadata key
  * @private

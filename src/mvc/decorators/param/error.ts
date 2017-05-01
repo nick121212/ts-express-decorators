@@ -3,8 +3,8 @@
  */ /** */
 
 import {Type} from "../../../core/interfaces/Type";
-import {EndpointParam} from "../../class/EndpointParam";
 import {EXPRESS_ERR} from "../../constants/index";
+import {ParamsRegistry} from "../../registries/ParamsRegistry";
 /**
  *
  * @returns {Function}
@@ -16,7 +16,7 @@ export function Err(): Function {
 
         if (typeof parameterIndex === "number") {
 
-            EndpointParam.useService(EXPRESS_ERR, {
+            ParamsRegistry.useService(EXPRESS_ERR, {
                 propertyKey,
                 parameterIndex,
                 target

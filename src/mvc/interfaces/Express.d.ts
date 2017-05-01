@@ -1,4 +1,4 @@
-import {Endpoint} from "../class/Endpoint";
+import {EndpointMetadata} from "../class/EndpointMetadata";
 
 declare global {
 
@@ -15,7 +15,7 @@ declare global {
             /**
              *
              */
-            getEndpoint(): Endpoint;
+            getEndpoint(): EndpointMetadata;
             /**
              *
              */

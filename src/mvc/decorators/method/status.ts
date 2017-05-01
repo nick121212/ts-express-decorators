@@ -17,11 +17,13 @@ import {UseAfter} from "./useAfter";
  */
 export function Status(code: number): Function {
 
-    return <T> (target: Function, targetKey: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> => {
+    return <T>(target: Function, targetKey: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> => {
 
         return UseAfter((request, response, next) => {
 
-            response.status(code);
+            if (!response.headersSent) {
+                response.status(code);
+            }
 
             next();
 

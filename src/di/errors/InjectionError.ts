@@ -1,14 +1,17 @@
 /**
  * @module di
- */ /** */
+ */
+/** */
+import {nameOf} from "../../core/utils/index";
+import {Type} from "../../core/interfaces/Type";
 /**
  * @private
  */
 export class InjectionError extends Error {
 
-    name: "INJECTION_ERROR";
+    name = "INJECTION_ERROR";
 
-    constructor(message) {
-        super(`Service ${message} not found.`);
+    constructor(target: Type<any>, serviceName: string) {
+        super(`Service ${nameOf(target)} > ${serviceName} not found.`);
     }
 }

@@ -8,8 +8,7 @@ import {IProvider} from "../../di/interfaces/Provider";
  */
 export enum MiddlewareType {
     ERROR,
-    MIDDLEWARE,
-    ENDPOINT
+    MIDDLEWARE
 }
 /**
  *

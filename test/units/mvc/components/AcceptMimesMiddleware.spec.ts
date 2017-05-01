@@ -1,59 +1,53 @@
-import {expect} from "chai";
+import {assert, expect} from "chai";
 import {MiddlewareService} from "../../../../src/mvc/services/MiddlewareService";
 import {AcceptMimesMiddleware} from "../../../../src/mvc/components/AcceptMimesMiddleware";
 import {FakeRequest} from "../../../helper/FakeRequest";
 import {inject} from "../../../../src/testing/inject";
 
-describe("AcceptMimesMiddleware :", () => {
+describe("AcceptMimesMiddleware", () => {
 
-    it("should accept mime", inject([MiddlewareService], (middlewareService: MiddlewareService) => {
+    before(inject([MiddlewareService], (middlewareService: MiddlewareService) => {
+        this.middleware = middlewareService.invoke<AcceptMimesMiddleware>(AcceptMimesMiddleware);
+        this.request = new FakeRequest();
+        this.request.mime = "application/json";
+    }));
 
-        const middleware = middlewareService.invoke<AcceptMimesMiddleware>(AcceptMimesMiddleware);
-        const request = new FakeRequest();
+    after(() => {
+        delete this.middleware;
+        delete this.request;
+    });
 
-        request.mime = "application/json";
+    it("should accept mime and return nothing when 'application/json' is configured", () => {
 
-        middleware.use({
+        expect(this.middleware.use({
             getMetadata: () => {
                 return ["application/json"];
             }
-        } as any, request as any);
+        }, this.request)).to.eq(undefined);
 
-    }));
+    });
 
-    it("should accept mime", inject([MiddlewareService], (middlewareService: MiddlewareService) => {
+    it("should accept mime and return nothing when nothing is configured", () => {
 
-        const middleware = middlewareService.invoke<AcceptMimesMiddleware>(AcceptMimesMiddleware);
-        const request = new FakeRequest();
-
-        request.mime = "application/json";
-
-        middleware.use({
+        expect(this.middleware.use({
             getMetadata: () => {
                 return undefined;
             }
-        } as any, request as any);
+        }, this.request)).to.eq(undefined);
 
-    }));
+    });
 
-    it("should not accept mime", inject([MiddlewareService], (middlewareService: MiddlewareService) => {
 
-        try {
-            const middleware = middlewareService.invoke<AcceptMimesMiddleware>(AcceptMimesMiddleware);
-            const request = new FakeRequest();
+    it("should not accept mime and throw a NotAcceptable error", () => {
 
-            request.mime = "application/json";
-
-            middleware.use({
+        assert.throws(() => {
+            this.middleware.use({
                 getMetadata: () => {
                     return ["application/xml"];
                 }
-            } as any, request as any);
-        } catch (er) {
-            expect(er.message).contains("You must accept content-type application/xml");
-        }
+            }, this.request);
+        }, "You must accept content-type application/xml");
 
-
-    }));
+    });
 
 });

@@ -1,4 +1,3 @@
-
 export class FakeRequest {
     method: string;
     path: string;
@@ -8,8 +7,9 @@ export class FakeRequest {
     public get(expression) {
         return "headerValue";
     }
+
     /**
-     * 
+     *
      * @type {{test: string, obj: {test: string}}}
      */
     public cookies: any = {
@@ -19,7 +19,7 @@ export class FakeRequest {
         }
     };
     /**
-     * 
+     *
      * @type {{test: string, obj: {test: string}}}
      */
     public body: any = {
@@ -29,7 +29,7 @@ export class FakeRequest {
         }
     };
     /**
-     * 
+     *
      * @type {{test: string, obj: {test: string}}}
      */
     public query: any = {
@@ -39,7 +39,7 @@ export class FakeRequest {
         }
     };
     /**
-     * 
+     *
      * @type {{test: string, obj: {test: string}}}
      */
     public params: any = {

@@ -3,8 +3,8 @@
  */
 /** */
 import {Type} from "../../../core/interfaces/Type";
-import {EndpointParam} from "../../class/EndpointParam";
 import {EXPRESS_REQUEST} from "../../constants/index";
+import {ParamsRegistry} from "../../registries/ParamsRegistry";
 /**
  * Request service.
  * @returns {function(Function, (string|symbol), number): void}
@@ -16,7 +16,7 @@ export function Request(): Function {
 
         if (typeof parameterIndex === "number") {
 
-            EndpointParam.useService(EXPRESS_REQUEST, {
+            ParamsRegistry.useService(EXPRESS_REQUEST, {
                 target,
                 propertyKey,
                 parameterIndex

@@ -8,8 +8,8 @@ import {$log} from "ts-log-debug";
 import {Exception} from "ts-httpexceptions";
 import {IMiddlewareError} from "../interfaces/Middleware";
 import {Err} from "../decorators/param/error";
-import {Request} from "../decorators/param/Request";
-import {Response} from "../decorators/param/Response";
+import {Request} from "../decorators/param/request";
+import {Response} from "../decorators/param/response";
 import {Next} from "../decorators/param/next";
 
 @MiddlewareError()

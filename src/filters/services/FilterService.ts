@@ -5,21 +5,21 @@
 import {Service} from "../../di/decorators/service";
 import {ServerSettingsService} from "../../server/services/ServerSettings";
 import {$log} from "ts-log-debug";
-import {getClass, getClassOrSymbol} from "../../core/utils";
-import {IFilter, IFilterProvider} from "../interfaces";
-import {EnvTypes, Type} from "../../core";
+import {IFilter} from "../interfaces";
+import {Type} from "../../core/interfaces/Type";
+import {EnvTypes} from "../../core/interfaces/Env";
+import {FilterRegistry, ProxyFilterRegistry} from "../registries/FilterRegistry";
+import {FilterProvider} from "../class/FilterProvider";
 import {InjectorService} from "../../di/services/InjectorService";
+import {IProvider} from "../../di/interfaces/Provider";
 /**
  *
  */
 @Service()
-export class FilterService {
+export class FilterService extends ProxyFilterRegistry {
 
-    private static filters: Map<Type<any>, IFilterProvider<any>> = new Map<Type<any>, IFilterProvider<any>>();
-
-    constructor(private injectorService: InjectorService,
-                private serverSettings: ServerSettingsService) {
-
+    constructor(private serverSettings: ServerSettingsService) {
+        super();
     }
 
     /**
@@ -27,50 +27,34 @@ export class FilterService {
      */
     $afterServicesInit() {
 
+        /* istanbul ignore next */
         if (this.serverSettings.env !== EnvTypes.TEST) {
             $log.info("[TSED] Import mvc");
         }
 
-        FilterService.filters.forEach((settings, target) => {
-            settings.instance = this.injectorService.invoke(target);
-            FilterService.filters.set(target, settings);
-        });
+        InjectorService.buildRegistry(FilterRegistry);
     }
-
     /**
      *
-     * @param callbackfn
-     * @param thisArg
+     * @param target
+     * @returns {ControllerProvider}
      */
-    forEach = (callbackfn: (value: any, index: any, map: Map<any, any>) => void, thisArg?: any): void =>
-        FilterService.filters.forEach(callbackfn);
+    static get = (target: Type<any>): FilterProvider =>
+        FilterRegistry.get(target);
+    /**
+     *
+     * @param target
+     * @param provider
+     */
+    static set = (target: Type<any>, provider: IProvider<any>) =>
+        FilterRegistry.merge(target, provider);
 
     /**
      *
      * @param target
-     * @returns {null}
      */
-    get = <T extends IFilter>(target: Type<T>): IFilterProvider<T> =>
-        FilterService.get<T>(getClass(target));
-
-    /**
-     *
-     * @returns {null}
-     * @param target
-     */
-    has = (target: Type<any>): boolean =>
-        FilterService.has(target);
-
-    /**
-     *
-     * @param target
-     * @param value
-     * @returns {null}
-     */
-    set = (target: Type<any>, value?: any): this => {
-        FilterService.set(getClass(target), value);
-        return this;
-    }
+    static has = (target: Type<any>): boolean =>
+        FilterRegistry.has(target);
 
     /**
      *
@@ -78,7 +62,7 @@ export class FilterService {
      * @returns {T}
      */
     invoke<T extends IFilter>(target: Type<T>): T {
-        return this.get<T>(target).instance;
+        return this.get(target).instance;
     }
 
     /**
@@ -92,60 +76,5 @@ export class FilterService {
     invokeMethod<T extends IFilter>(target: Type<T>, expression, request, response) {
         return this.invoke<T>(target).transform(expression, request, response);
     }
-    /**
-     *
-     * @param target
-     * @returns {null}
-     */
-    static get<T extends IFilter>(target: Type<T>): IFilterProvider<T> {
-        return this.filters.get(getClass(target));
-    }
 
-    /**
-     *
-     * @returns {null}
-     * @param target
-     */
-    static has(target: Type<any>): boolean {
-        return this.filters.has(getClass(target));
-    }
-
-    /**
-     *
-     * @returns {null}
-     * @param provider
-     * @param instance
-     */
-    static set(provider: IFilterProvider<any> | any, instance?: any): any {
-
-        let target;
-
-        if (provider["provide"] === undefined) {
-
-            target = provider;
-
-            provider = <IFilterProvider<any>>{
-                provide: target,
-                useClass: target,
-                instance: instance || target,
-                type: "filter"
-            };
-
-        } else {
-            target = provider.provide;
-        }
-
-        provider = Object.assign(
-            FilterService.filters.get(getClassOrSymbol(target)) || {},
-            provider
-        );
-
-        FilterService.filters.set(getClassOrSymbol(target), provider);
-
-        return FilterService;
-    }
-
-    get size() {
-        return FilterService.filters.size;
-    }
 }

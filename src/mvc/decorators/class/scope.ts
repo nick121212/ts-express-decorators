@@ -2,15 +2,15 @@
  * @module mvc
  */
 /** */
-import {Metadata} from "../../../core/class/Metadata";
-import {CONTROLLER_SCOPE} from "../../constants/index";
+import {ControllerRegistry} from "../../registries/ControllerRegistry";
 /**
  *
- * @param target
  * @decorator
+ * @param scope
  */
-export function Scope(target: any): void {
+export function Scope(scope: false | "request" = "request") {
 
-    /* istanbul ignore next */
-    Metadata.set(CONTROLLER_SCOPE, true, target);
+    return (target) => {
+        ControllerRegistry.merge(target, {scope});
+    };
 }

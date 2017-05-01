@@ -27,7 +27,9 @@ export function Location(location: string): Function {
 
         return UseAfter((request, response, next) => {
 
-            response.location(location);
+            if (!response.headersSent) {
+                response.location(location);
+            }
 
             next();
 

@@ -2,17 +2,18 @@
  * @module filters
  */ /** */
 
-import {FilterService} from "../services/FilterService";
+import {Type} from "../../core/interfaces/Type";
+import {FilterRegistry} from "../registries/FilterRegistry";
 /**
  *
  * @returns {(target:any)=>undefined}
  * @decorator
  */
-export function Filter() {
+export function Filter(): Function {
 
-    return (target) => {
+    return <T>(target: Type<T>) => {
 
-        FilterService.set(target);
+        FilterRegistry.merge(target, {provide: target, useClass: target});
 
-    }
+    };
 }

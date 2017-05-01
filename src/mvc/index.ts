@@ -4,12 +4,17 @@
  */ /** */
 export * from "./interfaces";
 
-// class
-export * from "./class/ControllerMetadata";
+// provide
+export * from "./class/ControllerProvider";
 export * from "./class/Endpoint";
-export * from "./class/EndpointParam";
+export * from "./class/ParamMetadata";
 
-// components
+// registries
+export * from "./registries/ControllerRegistry";
+export * from "./registries/EndpointRegistry";
+export * from "./registries/ParamsRegistry";
+
+// filters
 export * from "./components/GlobalAcceptMimesMiddleware";
 export * from "./components/GlobalErrorHandlerMiddleware";
 
@@ -20,7 +25,6 @@ export * from "./services/RouterController";
 export * from "./services/RouteService";
 
 // decorators
-
 // Method/Attributs
 export * from "./decorators/method/use";
 export * from "./decorators/method/useBefore";
@@ -39,13 +43,11 @@ export * from "./decorators/required";
 
 // Parameters
 export * from "./decorators/param/responseData";
-export * from "./decorators/param/params";
 export * from "./decorators/param/response";
 export * from "./decorators/param/request";
 export * from "./decorators/param/next";
 export * from "./decorators/param/error";
 export * from "./decorators/param/endpointInfo";
-export * from "./decorators/param/multipartFile";
 
 export * from "./decorators/class/controller";
 export * from "./decorators/class/middleware";

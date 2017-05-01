@@ -3,13 +3,14 @@
  */
 /** */
 import {Service} from "../../di/decorators/service";
-import {getClassName, isArrayOrArrayClass, isEmpty, isPrimitiveOrPrimitiveClass} from "../../core/utils";
-import {CONVERTER_DESERIALIZE, CONVERTER_SERIALIZE} from "../../core/constants/errors-msgs";
+import {isArrayOrArrayClass, isEmpty, isPrimitiveOrPrimitiveClass} from "../../core/utils";
 import {BadRequest} from "ts-httpexceptions";
 import {InjectorService} from "../../di";
 import {Metadata} from "../../core/class/Metadata";
 import {IConverter, IJsonMetadata} from "../interfaces/index";
 import {CONVERTER, JSON_PROPERTIES} from "../constants/index";
+import {ConverterDeserializationError} from "../errors/ConverterDeserializationError";
+import {ConverterSerializationError} from "../errors/ConverterSerializationError";
 
 @Service()
 export class ConverterService {
@@ -68,11 +69,7 @@ export class ConverterService {
 
         } catch (err) {
             /* istanbul ignore next */
-            (() => {
-                const castedError = new Error(CONVERTER_SERIALIZE(getClassName(obj), obj));
-                castedError.stack = err.stack;
-                throw castedError;
-            })();
+            throw new ConverterSerializationError(obj, err);
         }
 
         /* istanbul ignore next */
@@ -117,43 +114,42 @@ export class ConverterService {
             }
 
 
-
             // Default converter
-            if (!isPrimitiveOrPrimitiveClass(obj) && !isPrimitiveOrPrimitiveClass(targetType)) {
+            // if (!isPrimitiveOrPrimitiveClass(obj) && !isPrimitiveOrPrimitiveClass(targetType)) {
 
-                const instance = new targetType();
+            const instance = new targetType();
 
-                Object.keys(obj).forEach((propertyName: string) => {
-                    const jsonMetadata = ConverterService.getJsonMetadata(targetType, propertyName) || {};
-                    const propertyValue = obj[jsonMetadata.name] || obj[propertyName];
-                    const propertyKey = jsonMetadata.propertyKey || propertyName;
+            Object.keys(obj).forEach((propertyName: string) => {
+                const jsonMetadata = ConverterService.getJsonMetadata(targetType, propertyName) || {};
+                const propertyValue = obj[jsonMetadata.name] || obj[propertyName];
+                const propertyKey = jsonMetadata.propertyKey || propertyName;
 
-                    try {
+                try {
 
-                        if (typeof instance[propertyKey] !== "function") {
+                    if (typeof instance[propertyKey] !== "function") {
 
-                            instance[propertyKey] = this.deserialize(
-                                propertyValue,
-                                jsonMetadata.use,
-                                jsonMetadata.baseType
-                            );
-                        }
-
-                    } catch (err) {
-                        /* istanbul ignore next */
-                        (() => {
-                            const castedError = new Error("For " + propertyKey + " with value " + propertyValue +  " \n" + err.message);
-                            castedError.stack = err.stack;
-                            throw castedError;
-                        })();
+                        instance[propertyKey] = this.deserialize(
+                            propertyValue,
+                            jsonMetadata.use,
+                            jsonMetadata.baseType
+                        );
                     }
 
+                } catch (err) {
+                    /* istanbul ignore next */
+                    (() => {
+                        const castedError = new Error("For " + propertyKey + " with value " + propertyValue + " \n" + err.message);
+                        castedError.stack = err.stack;
+                        throw castedError;
+                    })();
+                }
 
-                });
 
-                return instance;
+            });
 
-            }
+            return instance;
+
+            // }
 
         } catch (err) {
 
@@ -162,16 +158,10 @@ export class ConverterService {
                 throw new BadRequest(err.message);
             } else {
                 /* istanbul ignore next */
-                (() => {
-                    const castedError = new Error(CONVERTER_DESERIALIZE(getClassName(targetType), obj) + "\n" + err.message);
-                    castedError.stack = err.stack;
-                    throw castedError;
-                })();
+                throw new ConverterDeserializationError(targetType, obj, err);
             }
 
         }
-
-        return obj;
     }
 
     /**

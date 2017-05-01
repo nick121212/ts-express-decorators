@@ -3,7 +3,7 @@
  */ /** */
 
 import {Type} from "../../core/interfaces/Type";
-import {EndpointParam} from "../class/EndpointParam";
+import {ParamsRegistry} from "../registries/ParamsRegistry";
 /**
  * Add required annotation for a function argument .
  * @returns {Function}
@@ -15,7 +15,7 @@ export function Required(): any {
 
         if (typeof parameterIndex === "number") {
 
-            EndpointParam.required(target, propertyKey, parameterIndex);
+            ParamsRegistry.required(target, propertyKey, parameterIndex);
 
         }
 

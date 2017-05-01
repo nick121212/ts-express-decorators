@@ -4,14 +4,14 @@ import {inject} from "../../../../src/testing/inject";
 
 const expect: Chai.ExpectStatic = Chai.expect;
 
-interface myFactory {
-  method(): string;
+interface MyFactory {
+    method(): string;
 }
 
-const myFactory = function() {
-    this.method = function(){
+const myFactory = function () {
+    this.method = function () {
         return "test";
-    }
+    };
 };
 
 class InvokeMethodTest {
@@ -26,75 +26,93 @@ class InvokeMethodTest {
     }
 }
 
-describe('InjectorService :', () => {
+class LocalService {
+}
 
-    describe('InjectorService.factory()', () => {
+describe("InjectorService", () => {
 
-       it('should create new Factory', () => {
 
-           InjectorService.factory(myFactory, new myFactory);
+    describe("static members", () => {
+        describe("factory()", () => {
 
-       });
+            it("should create new Factory", () => {
+                InjectorService.factory(myFactory, new myFactory);
+            });
 
-       it('should inject the Factory', inject([myFactory], (myFactory: myFactory) => {
-
-           expect(myFactory.method()).to.equal('test');
-
-       }));
-
-    });
-
-    describe('InjectorService.use()', () => {
-
-        it('should create new entry', () => {
-
-            InjectorService.set(myFactory, new myFactory);
+            it("should inject the Factory", inject([myFactory], (myFactory: MyFactory) => {
+                expect(myFactory.method()).to.equal("test");
+            }));
 
         });
 
-        it('should inject the Factory', inject([myFactory], (myFactory: myFactory) => {
+        describe("use()", () => {
 
-            expect(myFactory.method()).to.equal('test');
+            it("should create new entry", () => {
+                InjectorService.set(myFactory, new myFactory);
+            });
 
-        }));
+            it("should inject the Factory", inject([myFactory], (myFactory: MyFactory) => {
+                expect(myFactory.method()).to.equal("test");
+            }));
 
+        });
     });
 
-    describe('new InjectorService()', () => {
+    describe("instance members", () => {
 
-        describe('injectorService.get()', () => {
+        describe("get()", () => {
 
-            it('should get a service', inject([InjectorService], (injectorService: InjectorService) => {
-
+            it("should get a service", inject([InjectorService], (injectorService: InjectorService) => {
                 expect(injectorService.get(InjectorService)).to.be.an.instanceof(InjectorService);
-
             }));
 
-            it('should has the service', inject([InjectorService], (injectorService: InjectorService) => {
-
+            it("should has the service", inject([InjectorService], (injectorService: InjectorService) => {
                 expect(injectorService.has(InjectorService)).to.be.true;
-
             }));
 
         });
 
+        describe("construct()", () => {
+            class Test1 {
+            }
 
-        describe('injectorService.invoke()', () => {
+            before(() => {
+                InjectorService.set(Test1, {provide: Test1, useClass: Test1, type: "service"});
+            });
 
-            it('should invoke a function constructor', inject([InjectorService], (injectorService: InjectorService) => {
+            it("should construct provider", () => {
+                expect(InjectorService.construct(Test1)).to.be.instanceof(Test1);
+            });
+        });
 
-                const fnInvokable = function(injectorService: InjectorService) {
+        describe("invoke()", () => {
+            it("should invoke a function constructor", inject([InjectorService], (injectorService: InjectorService) => {
+
+                const fnInvokable = function (injectorService: InjectorService) {
                     expect(injectorService).to.be.an.instanceof(InjectorService);
                 };
 
                 injectorService.invoke(fnInvokable, undefined, [InjectorService]);
             }));
 
+            it("should invoke a function constructor with locals dependencies", inject([InjectorService], (injectorService: InjectorService) => {
+
+                const localService = new LocalService();
+                const locals = new Map();
+                locals.set(LocalService, localService);
+
+                const fnInvokable = function (injectorService: InjectorService, localService: LocalService) {
+                    expect(injectorService).to.be.an.instanceof(InjectorService);
+                    expect(localService).to.be.an.instanceof(LocalService);
+                };
+
+                injectorService.invoke(fnInvokable, locals, [InjectorService, LocalService]);
+            }));
         });
 
-        describe('injectorService.invokeMethod()', () => {
+        describe("invokeMethod()", () => {
 
-            it("should invoke a method of class (decorators)", inject([InjectorService], (injectorService: InjectorService) => {
+            it("should invoke a method of provide (decorators)", inject([InjectorService], (injectorService: InjectorService) => {
 
                 const instance = new InvokeMethodTest("1");
 
@@ -104,7 +122,7 @@ describe('InjectorService :', () => {
             }));
 
 
-            it("should invoke a method of class (decorators via Injector)", inject([InjectorService], (injectorService: InjectorService) => {
+            it("should invoke a method of provide (decorators via Injector)", inject([InjectorService], (injectorService: InjectorService) => {
 
                 const instance = new InvokeMethodTest("2");
 
@@ -114,8 +132,7 @@ describe('InjectorService :', () => {
             }));
 
 
-
-            it('should invoke a method of class (injector)', inject([InjectorService], (injectorService: InjectorService) => {
+            it("should invoke a method of provide (injector)", inject([InjectorService], (injectorService: InjectorService) => {
 
                 const result = injectorService.invokeMethod((injector) => injector, {
                     designParamTypes: [InjectorService]
@@ -124,7 +141,7 @@ describe('InjectorService :', () => {
                 expect(result).to.be.an.instanceof(InjectorService);
             }));
 
-            it('should invoke a method of class (injector)', inject([InjectorService], (injectorService: InjectorService) => {
+            it("should invoke a method of provide (injector)", inject([InjectorService], (injectorService: InjectorService) => {
 
                 const result = injectorService.invokeMethod((injector) => injector, [InjectorService]);
 
@@ -132,8 +149,8 @@ describe('InjectorService :', () => {
             }));
 
 
-            it('should invoke a method of class (injector +  locals)', inject([InjectorService], (injectorService: InjectorService) => {
-                
+            it("should invoke a method of provide (injector +  locals)", inject([InjectorService], (injectorService: InjectorService) => {
+
                 const locals = new Map<Function, any>();
                 locals.set(InjectorService, injectorService);
 
@@ -146,7 +163,6 @@ describe('InjectorService :', () => {
             }));
 
         });
-
 
     });
 });
