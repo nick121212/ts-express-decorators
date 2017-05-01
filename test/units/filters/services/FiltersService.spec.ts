@@ -1,15 +1,35 @@
-import {expect} from "chai";
+import {assert, expect} from "../../../tools";
+
 import {FakeRequest} from "../../../helper";
 import {inject} from "../../../../src/testing";
 import {HeaderParamsFilter} from "../../../../src/filters/components/HeaderParamsFilter";
 import {FakeResponse} from "../../../helper/FakeResponse";
-import {FilterService} from "../../../../src";
+import {FilterService} from "../../../../src/filters/services/FilterService";
+import {FilterProvider} from "../../../../src/filters/class/FilterProvider";
+
+class Test {
+
+}
 
 describe("FilterService", () => {
 
     before(inject([FilterService], (filterService: FilterService) => {
         this.filterService = filterService;
     }));
+
+    describe("get()", () => {
+        before(() => {
+            this.provider = new FilterProvider(Test);
+            FilterService.set(Test, this.provider);
+        });
+
+        it("should return true", () => {
+            expect(FilterService.has(Test)).to.eq(true);
+        });
+        it("should return provider", () => {
+            expect(FilterService.get(Test)).to.eq(this.provider);
+        });
+    });
 
     describe("invokeMethod()", () => {
         it("should invoke method from a filter", () => {
@@ -19,6 +39,18 @@ describe("FilterService", () => {
                 new FakeRequest,
                 new FakeResponse
             )).to.equal("headerValue");
+        });
+
+        it("should throw an error when filter isn't known", () => {
+            assert.throws(() => {
+                this.filterService.invokeMethod(
+                    class T {
+                    },
+                    "x-token",
+                    new FakeRequest,
+                    new FakeResponse
+                );
+            }, "Filter T not found");
         });
 
     });
@@ -36,18 +68,6 @@ describe("FilterService", () => {
             const headerFilter = new HeaderParamsFilter();
             this.filterService.set(HeaderParamsFilter, {instance: headerFilter});
             expect(this.filterService.get(HeaderParamsFilter).instance).to.equals(headerFilter);
-        });
-
-        xit("should set custom filter", () => {
-            /*const instance = new HeaderParamsFilter();
-
-             FilterService.set({
-             provide: HeaderParamsFilter,
-             useClass: HeaderParamsFilter,
-             instance,
-             type: "filter"
-             });
-             expect(this.filterService.get(HeaderParamsFilter).instance).to.equals(instance);*/
         });
     });
 

@@ -7,7 +7,7 @@ import * as Http from "http";
 import * as Https from "https";
 import {$log} from "ts-log-debug";
 
-import {Deprecated, ExpressApplication, Metadata} from "../../core";
+import {Deprecated, ExpressApplication} from "../../core";
 import {ServerSettingsProvider, ServerSettingsService} from "../services/ServerSettings";
 import {InjectorService} from "../../di";
 
@@ -16,8 +16,8 @@ import {ControllerService, GlobalErrorHandlerMiddleware, MiddlewareService} from
 import {IServerMountDirectories, IServerSettings} from "../interfaces/ServerSettings";
 import {IServerLifecycle} from "../interfaces/ServerLifeCycle";
 import {IHTTPSServerOptions} from "../interfaces/HTTPSServerOptions";
-import {SERVER_SETTINGS} from "../constants/index";
 import {HandlerBuilder} from "../../mvc/class/HandlerBuilder";
+import {RouteService} from "../../mvc/services/RouteService";
 
 
 /**
@@ -63,11 +63,11 @@ export abstract class ServerLoader implements IServerLifecycle {
 
         // Configure the ExpressApplication factory.
         InjectorService.factory(ExpressApplication, this.expressApp);
+
         this._settings = new ServerSettingsProvider();
-        this._settings.env = process.env.NODE_ENV || this.expressApp.get("env") || "development";
         this._settings.authentification = ((<any>this).isAuthenticated || (<any>this).$onAuth || new Function()).bind(this);
 
-        const settings = Metadata.get(SERVER_SETTINGS, this);
+        const settings = ServerSettingsProvider.getMetadata(this);
 
         if (settings) {
             this.autoload(settings);
@@ -169,11 +169,12 @@ export abstract class ServerLoader implements IServerLifecycle {
             .then(() => {
 
                 const controllerService = this.injectorService.get<ControllerService>(ControllerService);
+                const routeService = this.injectorService.get<RouteService>(RouteService);
                 $log.info("[TSED] Import controllers");
                 controllerService.load();
 
                 $log.info("[TSED] Routes mounted :");
-                controllerService.printRoutes($log);
+                routeService.printRoutes($log);
 
             })
             .then(() => {
@@ -267,11 +268,26 @@ export abstract class ServerLoader implements IServerLifecycle {
      * Binds and listen all ports (Http and/or Https). Run server.
      * @returns {Promise<any>|Promise}
      */
-    public start(): Promise<any> {
+    public async start(): Promise<any> {
 
         this.getSettingsService();
 
-        return Promise
+        const call = (key, elseFn = () => {
+        }, ...args) => key in this ? this[key](...args) : elseFn;
+
+        try {
+            await call("$onInit");
+            await this.initializeSettings();
+            await this.startServers();
+            await call("$onReady");
+        } catch (err) {
+            return call("$onServerInitError", () => {
+                $log.error("[TSED] HTTP Server error", err);
+            }, err);
+        }
+
+
+        /*return Promise
             .resolve()
             .then(() => "$onInit" in this ? (this as any).$onInit() : null)
             .then(() => this.initializeSettings())
@@ -287,7 +303,8 @@ export abstract class ServerLoader implements IServerLifecycle {
                 } else {
                     $log.error("[TSED] HTTP Server error", err);
                 }
-            });
+         });*/
+
 
     }
 

@@ -62,8 +62,12 @@ export class FakeRequest {
     }
 
     public getStoredData() {
-        return this._responseData;
+        return this._responseData || {};
     }
 
     public accepts = (mime) => this.mime === mime;
+
+    public getEndpoint() {
+        return {};
+    }
 }

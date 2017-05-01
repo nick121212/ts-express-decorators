@@ -2,23 +2,23 @@
  * @module filters
  */
 /** */
+import {$log} from "ts-log-debug";
 import {Service} from "../../di/decorators/service";
 import {ServerSettingsService} from "../../server/services/ServerSettings";
-import {$log} from "ts-log-debug";
 import {IFilter} from "../interfaces";
 import {Type} from "../../core/interfaces/Type";
 import {EnvTypes} from "../../core/interfaces/Env";
 import {FilterRegistry, ProxyFilterRegistry} from "../registries/FilterRegistry";
 import {FilterProvider} from "../class/FilterProvider";
 import {InjectorService} from "../../di/services/InjectorService";
-import {IProvider} from "../../di/interfaces/Provider";
+import {UnknowFilterError} from "../errors/UnknowFilterError";
 /**
  *
  */
 @Service()
 export class FilterService extends ProxyFilterRegistry {
 
-    constructor(private serverSettings: ServerSettingsService) {
+    constructor(private serverSettings: ServerSettingsService, private injectorService: InjectorService) {
         super();
     }
 
@@ -34,6 +34,7 @@ export class FilterService extends ProxyFilterRegistry {
 
         InjectorService.buildRegistry(FilterRegistry);
     }
+
     /**
      *
      * @param target
@@ -41,13 +42,16 @@ export class FilterService extends ProxyFilterRegistry {
      */
     static get = (target: Type<any>): FilterProvider =>
         FilterRegistry.get(target);
+
     /**
      *
      * @param target
      * @param provider
      */
-    static set = (target: Type<any>, provider: IProvider<any>) =>
-        FilterRegistry.merge(target, provider);
+    static set(target: Type<any>, provider: FilterProvider) {
+        FilterRegistry.set(target, provider);
+        return this;
+    }
 
     /**
      *
@@ -59,22 +63,30 @@ export class FilterService extends ProxyFilterRegistry {
     /**
      *
      * @param target
+     * @param locals
+     * @param designParamTypes
      * @returns {T}
      */
-    invoke<T extends IFilter>(target: Type<T>): T {
-        return this.get(target).instance;
+    invoke<T extends IFilter>(target: Type<T>, locals: Map<Function, any> = new Map<Function, any>(), designParamTypes?: any[]): T {
+        return this.injectorService.invoke<T>(target, locals, designParamTypes);
     }
 
     /**
      *
      * @param target
-     * @param expression
-     * @param request
-     * @param response
+     * @param args
      * @returns {any}
      */
-    invokeMethod<T extends IFilter>(target: Type<T>, expression, request, response) {
-        return this.invoke<T>(target).transform(expression, request, response);
+    invokeMethod<T extends IFilter>(target: Type<T>, ...args: any[]) {
+
+        if (!this.has(target)) {
+            throw new UnknowFilterError(target);
+        }
+
+        const provider = this.get(target);
+        const instance = provider.instance || this.invoke(provider.useClass);
+
+        return instance.transform(...args);
     }
 
 }

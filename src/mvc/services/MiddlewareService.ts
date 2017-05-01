@@ -13,6 +13,7 @@ import {IMiddleware} from "../interfaces";
 import {MiddlewareRegistry, ProxyMiddlewareRegistry} from "../registries/MiddlewareRegistry";
 import {MiddlewareProvider} from "../class/MiddlewareProvider";
 import {InjectorService} from "../../di/services/InjectorService";
+import {UnknowMiddlewareError} from "../errors/UnknowMiddlewareError";
 
 
 /**
@@ -21,7 +22,7 @@ import {InjectorService} from "../../di/services/InjectorService";
 @Service()
 export class MiddlewareService extends ProxyMiddlewareRegistry {
 
-    constructor(private serverSettings: ServerSettingsService) {
+    constructor(private injectorService: InjectorService, private serverSettings: ServerSettingsService) {
         super();
     }
 
@@ -30,6 +31,7 @@ export class MiddlewareService extends ProxyMiddlewareRegistry {
      */
     $afterServicesInit() {
 
+        /* istanbul ignore next */
         if (this.serverSettings.env !== EnvTypes.TEST) {
             $log.info("[TSED] Import mvc");
         }
@@ -64,20 +66,41 @@ export class MiddlewareService extends ProxyMiddlewareRegistry {
     /**
      *
      * @param target
+     * @param locals
+     * @param designParamTypes
      * @returns {T}
      */
-    static invoke<T extends IMiddleware>(target: Type<T>): T {
-        const provider = MiddlewareRegistry.get(target);
-        provider.instance = InjectorService.invoke(provider.useClass);
-        return provider.instance;
+    // static invoke<T extends IMiddleware>(target: Type<T>, locals: Map<Function, any> = new Map<Function, any>(), designParamTypes?: any[]): T {
+    //    const provider = MiddlewareRegistry.get(target);
+    //    return InjectorService.invoke<T>(provider.useClass);
+    // }
+
+    /**
+     *
+     * @param target
+     * @param locals
+     * @param designParamTypes
+     * @returns {T}
+     */
+    invoke<T extends IMiddleware>(target: Type<T>, locals: Map<Function, any> = new Map<Function, any>(), designParamTypes?: any[]): T {
+        return this.injectorService.invoke<T>(target, locals, designParamTypes);
     }
 
     /**
      *
      * @param target
-     * @returns {T}
+     * @param args
+     * @returns {any}
      */
-    invoke<T extends IMiddleware>(target: Type<T>): T {
-        return MiddlewareService.invoke<T>(target);
+    invokeMethod<T extends IMiddleware>(target: Type<T>, ...args: any[]) {
+
+        if (!this.has(target)) {
+            throw new UnknowMiddlewareError(target);
+        }
+
+        const provider = this.get(target);
+        const instance = provider.instance || this.invoke(provider.useClass);
+
+        return instance.use(...args);
     }
 }

@@ -4,7 +4,6 @@ export class FakeResponse {
     _json: any;
     _body: any = "";
     _headers: string = "";
-
     public set() {
         return this;
     }

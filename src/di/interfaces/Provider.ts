@@ -15,7 +15,7 @@ export interface IProvider<T> {
     /**
      * Class to instantiate for the `token`.
      */
-    useClass: Type<T>;
+    useClass?: Type<T>;
 
     /**
      *

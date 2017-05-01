@@ -1,3 +1,7 @@
+import * as Proxyquire from "proxyquire";
+const {ServerLoader} = Proxyquire("../../../src/server/components/ServerLoader", {});
+
+
 // import {assert, expect} from "chai";
 // import {ServerLoader, ServerSettingsService} from "../../../src";
 // import {FakeServer} from "../../helper";
