@@ -68,6 +68,7 @@ export abstract class ServerLoader implements IServerLifecycle {
      *
      */
     private _injectorService: InjectorService;
+
     /**
      *
      * @constructor
@@ -80,7 +81,7 @@ export abstract class ServerLoader implements IServerLifecycle {
         this._settings.env = process.env.NODE_ENV || this.expressApp.get("env") || "development";
         this._settings.authentification = ((<any>this).isAuthenticated || (<any>this).$onAuth || new Function()).bind(this);
 
-        const settings =  Metadata.get(SERVER_SETTINGS, this);
+        const settings = Metadata.get(SERVER_SETTINGS, this);
 
         if (settings) {
             this.autoload(settings);
@@ -218,6 +219,7 @@ export abstract class ServerLoader implements IServerLifecycle {
         InjectorService.factory(ServerSettingsService, this.settings.$get());
         return InjectorService.get<ServerSettingsService>(ServerSettingsService);
     }
+
     /**
      *
      */
@@ -405,7 +407,7 @@ export abstract class ServerLoader implements IServerLifecycle {
      */
     public scan(path: string, endpoint: string = this._settings.endpoint): ServerLoader {
 
-        let files: string[] = require("glob").sync(path);
+        let files: string[] = require("glob").sync(path.replace(/\\/gi, "/"));
         let nbFiles = 0;
 
         $log.info("[TSED] Scan files : " + path);
@@ -471,14 +473,14 @@ export abstract class ServerLoader implements IServerLifecycle {
         /* istanbul ignore else */
 
         if (mountDirectories) {
-            if (require.resolve("serve-static") ) {
+            if (require.resolve("serve-static")) {
                 const serveStatic = require("serve-static");
 
                 Object.keys(mountDirectories).forEach(key => {
                     this.use(key, (request, response, next) => {
                         /* istanbul ignore next */
                         if (!response.headersSent) {
-                            serveStatic(mountDirectories[key])(request , response, next);
+                            serveStatic(mountDirectories[key])(request, response, next);
                         } else {
                             next();
                         }
@@ -499,6 +501,7 @@ export abstract class ServerLoader implements IServerLifecycle {
     get settings(): ServerSettingsProvider {
         return this._settings;
     }
+
     /**
      * Return Express Application instance.
      * @returns {core.Express}
@@ -547,7 +550,7 @@ export abstract class ServerLoader implements IServerLifecycle {
     /* istanbul ignore next */
     static AcceptMime(...mimes: string[]): Function {
 
-        return function(req: Express.Request, res: Express.Response, next: Express.NextFunction): any {
+        return function (req: Express.Request, res: Express.Response, next: Express.NextFunction): any {
 
             for (let i = 0; i < mimes.length; i++) {
                 if (!req.accepts(mimes[i])) {
