@@ -44,6 +44,7 @@ test/**/*.js
 test/**/*.js.map
 test/spec/*.js
 test/spec/*.js.map
+docs
 
 # Test
 /stdout
