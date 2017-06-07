@@ -1,15 +1,14 @@
-
 import {Service} from "../decorators/class/service";
 import {ExpressApplication} from "./express-application";
 import Controller from "../controllers/controller";
 import Metadata from "./metadata";
-import {CONTROLLER_URL, CONTROLLER_DEPEDENCIES, CONTROLLER_SCOPE} from "../constants/metadata-keys";
+import {CONTROLLER_DEPEDENCIES, CONTROLLER_SCOPE, CONTROLLER_URL} from "../constants/metadata-keys";
 import {$log} from "ts-log-debug";
 import {IControllerRoute} from "../interfaces";
 import {Endpoint} from "../controllers/endpoint";
 import {getClassName} from "../utils";
 import InjectorService from "./injector";
-import {UNKNOW_CONTROLLER, CYCLIC_REF} from "../constants/errors-msgs";
+import {CYCLIC_REF, UNKNOW_CONTROLLER} from "../constants/errors-msgs";
 import {Inject} from "../decorators/inject";
 import RouterController from "./router-controller";
 import EndpointParam from "../controllers/endpoint-param";
@@ -32,9 +31,7 @@ export default class ControllerService {
      *
      * @param expressApplication
      */
-    constructor (
-        @Inject(ExpressApplication) private expressApplication: ExpressApplication
-    ) {
+    constructor(@Inject(ExpressApplication) private expressApplication: ExpressApplication) {
 
     }
 
@@ -259,8 +256,8 @@ export default class ControllerService {
      * @param locals
      * @returns {T}
      */
-    public invoke<T>(target: any, locals: Map<string|Function, any> = new Map<string|Function, any>()): T {
-        return ControllerService.invoke<T>(target);
+    public invoke<T>(target: any, locals: Map<string | Function, any> = new Map<string | Function, any>()): T {
+        return ControllerService.invoke<T>(target, locals);
     }
 
     /**
@@ -269,7 +266,7 @@ export default class ControllerService {
      * @param locals
      * @returns {T}
      */
-    static invoke<T>(target: any, locals: Map<string|Function, any> = new Map<string|Function, any>()): T {
+    static invoke<T>(target: any, locals: Map<string | Function, any> = new Map<string | Function, any>()): T {
 
         target = target.targetClass || target;
 
@@ -356,7 +353,7 @@ export default class ControllerService {
     /**
      * Print all route mounted in express via Annotation.
      */
-    public printRoutes(logger: {info: (s) => void} = $log): void {
+    public printRoutes(logger: { info: (s) => void } = $log): void {
 
         const mapColor = {
             GET: (<any>"GET").green,
