@@ -14,7 +14,8 @@ import EndpointParam from "../controllers/endpoint-param";
 import ConverterService from "./converter";
 import InjectorService from "./injector";
 import FilterService from "./filter";
-import {ENDPOINT_INFO, RESPONSE_DATA} from "../constants/metadata-keys";
+import {ENDPOINT_INFO, INJECT_PARAMS, RESPONSE_DATA} from "../constants/metadata-keys";
+import Metadata from "./metadata";
 
 @Service()
 export default class MiddlewareService {
@@ -87,14 +88,14 @@ export default class MiddlewareService {
      * @returns {T}
      */
     get = <T extends IMiddleware>(target: Type<T>): IMiddlewareProvider<T> =>
-        MiddlewareService.get<T>(getClass(target));
+        MiddlewareService.get<T>(getClass(target))
 
     /**
      *
      * @param target
      */
     has = (target: Type<any>): boolean =>
-        MiddlewareService.has(getClass(target));
+        MiddlewareService.has(getClass(target))
 
     /**
      *
@@ -113,7 +114,7 @@ export default class MiddlewareService {
      * @param thisArg
      */
     forEach = <T extends IMiddleware>(callbackfn: (value: IMiddlewareProvider<T>, index: any, map: Map<any, IMiddlewareProvider<any>>) => void, thisArg?: any): void =>
-        MiddlewareService.middlewares.forEach(callbackfn);
+        MiddlewareService.middlewares.forEach(callbackfn)
 
     /**
      *
