@@ -23,5 +23,6 @@ export interface IServerSettings {
     componentsScan?: string[];
     serveStatic?: IServerMountDirectories;
     acceptMimes?: string[];
+    debug?: boolean;
     [key: string]: any;
 }

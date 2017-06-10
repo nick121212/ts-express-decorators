@@ -2,7 +2,7 @@ import {BodyParams, Controller, Delete, Get, Head, Patch, Post, Put, Response} f
 import {EventModel} from "../../models/Event";
 
 
-interface IEvent{
+interface IEvent {
     id: string;
 }
 
@@ -11,8 +11,8 @@ export class EventCtrl {
     /**
      *
      */
-    @Head('/')
-    head(){
+    @Head("/")
+    head() {
 
     }
 
@@ -20,8 +20,8 @@ export class EventCtrl {
      *
      * @returns {string}
      */
-    @Patch('/:id')
-    patch(){
+    @Patch("/:id")
+    patch() {
         return "";
     }
 
@@ -30,10 +30,10 @@ export class EventCtrl {
      * @param response
      * @returns {null}
      */
-    @Get('/:id')
+    @Get("/:id")
     find(@Response() response: any): Promise<IEvent> | void {
 
-        response.send(200, 'OK');
+        response.send(200, "OK");
 
         return null;
     }
@@ -42,9 +42,8 @@ export class EventCtrl {
      *
      * @returns {null}
      */
-    @Put('/')
+    @Put("/")
     save(): Promise<any> | void {
-
 
 
         return null;
@@ -55,7 +54,7 @@ export class EventCtrl {
      * @param event
      * @returns {null}
      */
-    @Post('/:id')
+    @Post("/:id")
     update(@BodyParams("event", EventModel) event: EventModel[]): EventModel[] {
 
         return event;
@@ -65,7 +64,7 @@ export class EventCtrl {
      *
      * @returns {null}
      */
-    @Delete('/:id')
+    @Delete("/:id")
     remove(): Promise<any> | void {
         return null;
     }
@@ -74,7 +73,7 @@ export class EventCtrl {
      *
      * @returns {null}
      */
-    @Get('/')
+    @Get("/")
     query(): Promise<any[]> | void {
 
         return null;

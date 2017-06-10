@@ -1,9 +1,11 @@
 import * as Proxyquire from "proxyquire";
-import {Sinon} from "../../tools";
-import {ServerSettings} from "../../../src/server/decorators/serverSettings";
+import {Metadata} from "../../../src/core/class/Metadata";
+import {SERVER_SETTINGS} from "../../../src/server/constants/index";
+
 const {ServerLoader} = Proxyquire("../../../src/server/components/ServerLoader", {
     "http": {},
-    "https": {}
+    "https": {}// ,
+    // "ts-log-debug": $logStub
 });
 
 
@@ -12,17 +14,20 @@ describe("ServerLoader", () => {
         class TestServer extends ServerLoader {
 
         }
-        this.getMetadataStub = Sinon.stub(ServerSettings, "getMetadata");
-        this.getMetadataStub.returns({});
+
+        Metadata.set(SERVER_SETTINGS, {debug: true}, TestServer);
 
         this.server = new TestServer();
+        return this.server.start();
     });
     after(() => {
-        this.getMetadataStub.restore();
+
     });
 
     it("start()", () => {
+        before(() => {
 
+        });
     });
 });
 

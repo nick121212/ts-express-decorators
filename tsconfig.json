@@ -18,6 +18,7 @@
     "types": [
       "node",
       "chai",
+      "chai-as-promised",
       "sinon",
       "sinon-chai",
       "mocha",

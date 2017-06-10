@@ -34,7 +34,8 @@ describe("MiddlewareService", () => {
 
         it("should invoke method from a filter", () => {
             expect(this.middlewareService.invokeMethod(
-                Test
+                Test,
+                {}
             )).to.equal("headerValue");
         });
 

@@ -19,7 +19,6 @@ import {IHTTPSServerOptions} from "../interfaces/HTTPSServerOptions";
 import {HandlerBuilder} from "../../mvc/class/HandlerBuilder";
 import {RouteService} from "../../mvc/services/RouteService";
 
-
 /**
  * ServerLoader provider all method to instantiate an ExpressServer.
  *
@@ -32,7 +31,7 @@ import {RouteService} from "../../mvc/services/RouteService";
  *
  */
 export abstract class ServerLoader implements IServerLifecycle {
-
+    protected serverCodeName = "[TSED]";
     /**
      * Application express.
      * @type {core.Express}
@@ -42,6 +41,7 @@ export abstract class ServerLoader implements IServerLifecycle {
      *
      */
     private _settings: ServerSettingsProvider;
+    private _settingsService: ServerSettingsService;
     /**
      * Instance of httpServer.
      */
@@ -70,7 +70,8 @@ export abstract class ServerLoader implements IServerLifecycle {
         const settings = ServerSettingsProvider.getMetadata(this);
 
         if (settings) {
-            this.autoload(settings);
+            $log.debug(this.serverCodeName, "Autoload configuration from metadata");
+            this.setSettings(settings);
         }
     }
 
@@ -150,58 +151,60 @@ export abstract class ServerLoader implements IServerLifecycle {
     }
 
     /**
-     * Initialize configuration of the express app.
+     *
+     * @returns {Promise<void>}
      */
-    public initializeSettings(): Promise<any> {
+    protected async loadSettingsAndInjector() {
+        $log.setRepporting({debug: this.settings.get("debug")});
 
-        const settingsService = this.getSettingsService();
+        $log.debug(this.serverCodeName, "Initialize settings");
+        this._settingsService = this.getSettingsService();
 
-        $log.info("[TSED] Import services");
+        this._settingsService
+            .forEach((value, key, map) => {
+                $log.info(this.serverCodeName, `settings.${key} =>`, value);
+            });
+
+        $log.info(this.serverCodeName, "Import services");
         InjectorService.load();
         this._injectorService = InjectorService.get<InjectorService>(InjectorService);
+    }
 
-        const $onMountingMiddlewares = (<any>this).importMiddlewares || (<any>this).$onMountingMiddlewares || new Function; // TODO Fallback
-        const $afterRoutesInit = (<any>this).$afterRoutesInit || new Function; // TODO Fallback
+    /**
+     * Initialize configuration of the express app.
+     */
+    protected async loadMiddlewares(): Promise<any> {
 
-        return Promise
-            .resolve()
-            .then(() => $onMountingMiddlewares.call(this, this.expressApp))
-            .then(() => {
+        $log.debug("[TSED]", "Mount middlewares");
+        await this.callHook("$onMountingMiddlewares", undefined, this.expressApp);
 
-                const controllerService = this.injectorService.get<ControllerService>(ControllerService);
-                const routeService = this.injectorService.get<RouteService>(RouteService);
-                $log.info("[TSED] Import controllers");
-                controllerService.load();
+        const controllerService = this.injectorService.get<ControllerService>(ControllerService);
+        const routeService = this.injectorService.get<RouteService>(RouteService);
 
-                $log.info("[TSED] Routes mounted :");
-                routeService.printRoutes($log);
+        $log.info(this.serverCodeName, "Import controllers");
+        controllerService.load();
 
-            })
-            .then(() => {
+        $log.info(this.serverCodeName, "Routes mounted :");
+        routeService.printRoutes($log);
 
-                this.mountStaticDirectories(settingsService.serveStatic);
+        this.mountStaticDirectories(this._settingsService.serveStatic);
 
-                return $afterRoutesInit.call(this, this.expressApp);
-            })
-            .then(() => {
+        await this.callHook("$afterRoutesInit", undefined, this.expressApp);
 
-                // Import the globalErrorHandler
-                const fnError = (<any>this).$onError;
+        // Import the globalErrorHandler
 
-                /* istanbul ignore next */
-                if (fnError) {
-                    this.use(fnError.bind(this));
-                }
+        /* istanbul ignore next */
+        if (this.hasHook("$onError")) {
+            this.use(this["$onError"].bind(this));
+        }
 
-                this.use(GlobalErrorHandlerMiddleware);
-
-            });
+        this.use(GlobalErrorHandlerMiddleware);
     }
 
     /**
      *
      */
-    private getSettingsService(): ServerSettingsService {
+    protected getSettingsService(): ServerSettingsService {
         InjectorService.factory(ServerSettingsService, this.settings.$get());
         return InjectorService.get<ServerSettingsService>(ServerSettingsService);
     }
@@ -209,9 +212,7 @@ export abstract class ServerLoader implements IServerLifecycle {
     /**
      *
      */
-    private autoload(settings: IServerSettings) {
-
-        $log.info("[TSED] Autoload configuration :");
+    protected setSettings(settings: IServerSettings) {
 
         this._settings.set(settings);
 
@@ -247,10 +248,6 @@ export abstract class ServerLoader implements IServerLifecycle {
             }
         };
 
-        settingsService
-            .forEach((value, key, map) => {
-                $log.info(`[TSED] settings.${key} =>`, value);
-            });
 
         settingsService
             .forEach((value, key, map) => {
@@ -269,94 +266,61 @@ export abstract class ServerLoader implements IServerLifecycle {
      * @returns {Promise<any>|Promise}
      */
     public async start(): Promise<any> {
-
-        this.getSettingsService();
-
-        const call = (key, elseFn = () => {
-        }, ...args) => key in this ? this[key](...args) : elseFn;
-
+        const start = new Date();
         try {
-            await call("$onInit");
-            await this.initializeSettings();
+            await this.callHook("$onInit");
+            await this.loadSettingsAndInjector();
+            await this.loadMiddlewares();
             await this.startServers();
-            await call("$onReady");
+            await this.callHook("$onReady");
         } catch (err) {
-            return call("$onServerInitError", () => {
-                $log.error("[TSED] HTTP Server error", err);
-            }, err);
+            return this.callHook("$onServerInitError", () => {
+                $log.error(this.serverCodeName, "HTTP Server error", err);
+            }, err)
+                .then(() => {
+                    $log.info(this.serverCodeName, `Started in ${new Date().getTime() - start.getTime()} ms`);
+                });
         }
+    }
 
-
-        /*return Promise
-            .resolve()
-            .then(() => "$onInit" in this ? (this as any).$onInit() : null)
-            .then(() => this.initializeSettings())
-            .then(() => this.startServers())
+    protected startServer(http, settings) {
+        const {address, port} = settings;
+        http.listen(+port, address);
+        $log.debug(this.serverCodeName, `Start HTTP server on ${settings.address}:${settings.port}`);
+        return new Promise((resolve, reject) =>
+            http
+                .on("listening", resolve)
+                .on("error", reject)
+        )
             .then(() => {
-                if ("$onReady" in this) {
-                    (this as any).$onReady();
-                }
-            })
-            .catch((err) => {
-                if ("$onServerInitError" in this) {
-                    return (<any>this).$onServerInitError(err);
-                } else {
-                    $log.error("[TSED] HTTP Server error", err);
-                }
-         });*/
-
-
+                $log.info(this.serverCodeName, `HTTP Server listen on ${settings.address}:${settings.port}`);
+            });
     }
 
     /**
      * Initiliaze all servers.
      * @returns {Bluebird<U>}
      */
-    private startServers(): Promise<any> {
-        let promises: Promise<any>[] = [];
-        const settingsService = this.getSettingsService();
+    private async startServers(): Promise<any> {
+        const promises: Promise<any>[] = [];
 
         if (this.httpServer) {
-
-            const {address, port} = settingsService.getHttpPort();
-
-            $log.debug(`[TSED] Start HTTP server on ${address}:${port}`);
-            this.httpServer.listen(+port, address);
-
-            promises.push(new Promise<any>((resolve, reject) => {
-                this._httpServer
-                    .on("listening", () => {
-                        // The address should be read from server instance but it seems like mocha is failing with this
-                        // let { address, port } = this._httpServer.address();
-                        $log.info(`[TSED] HTTP Server listen on ${address}:${port}`);
-                        resolve();
-                    })
-                    .on("error", reject);
-            }));
+            const settings = this._settingsService.getHttpPort();
+            promises.push(this.startServer(
+                this.httpServer,
+                {https: false, ...settings}
+            ));
         }
 
         if (this.httpsServer) {
-
-            const {address, port} = settingsService.getHttpsPort();
-
-            $log.debug(`[TSED] Start HTTPs server on ${address}:${port}`);
-            this.httpsServer.listen(+port, address);
-
-            promises.push(new Promise<any>((resolve, reject) => {
-                this._httpsServer
-                    .on("listening", () => {
-                        // The address should be read from server instance but it seems like mocha is failing with this
-                        // let { address, port } = this._httpsServer.address();
-                        $log.info(`[TSED] HTTPs Server listen port ${address}:${port}`);
-                        resolve();
-                    })
-                    .on("error", reject);
-            }));
+            const settings = this._settingsService.getHttpsPort();
+            promises.push(this.startServer(
+                this.httpsServer,
+                {https: false, ...settings}
+            ));
         }
 
-
         return Promise.all<any>(promises);
-
     }
 
     /**
@@ -412,7 +376,7 @@ export abstract class ServerLoader implements IServerLifecycle {
         let files: string[] = require("glob").sync(path.replace(/\\/gi, "/"));
         let nbFiles = 0;
 
-        $log.info("[TSED] Scan files : " + path);
+        $log.info(this.serverCodeName, `Scan files : ${path}`);
 
 
         files
@@ -421,7 +385,7 @@ export abstract class ServerLoader implements IServerLifecycle {
 
                 try {
 
-                    $log.debug(`[TSED] Import file ${endpoint}:`, file);
+                    $log.debug(this.serverCodeName, `Import file ${endpoint}:`, file);
                     ControllerService
                         .require(file)
                         .mapTo(endpoint);
@@ -486,6 +450,28 @@ export abstract class ServerLoader implements IServerLifecycle {
 
         return this;
     }
+
+    /**
+     *
+     * @param key
+     * @param elseFn
+     * @param args
+     * @returns {any}
+     */
+    private callHook = (key, elseFn = new Function, ...args) => {
+
+        if (key in this) {
+            $log.debug(this.serverCodeName, `Call hook ${key}()`);
+            return this[key](...args);
+        }
+
+        return elseFn();
+    };
+    /**
+     *
+     * @param key
+     */
+    private hasHook = (key) => !!this[key];
 
     /**
      * Return the settings provider.

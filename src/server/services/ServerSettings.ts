@@ -177,6 +177,10 @@ export class ServerSettingsService implements IServerSettings {
         return this.map.get("authentification") as Function;
     }
 
+    get debug(): boolean {
+        return !!this.map.get("debug");
+    }
+
     /**
      *
      * @param callbackfn
@@ -216,6 +220,7 @@ export class ServerSettingsProvider implements IServerSettings {
         this.httpsPort = 8000;
         this.endpointUrl = "/rest";
         this.uploadDir = "${rootDir}/uploads";
+        this.debug = false;
 
         /* istanbul ignore next */
         this.authentification = () => (true);
@@ -311,6 +316,14 @@ export class ServerSettingsProvider implements IServerSettings {
 
     /**
      *
+     * @returns {Map<string, any>}
+     */
+    get env(): Env {
+        return this.map.get("env") as Env;
+    }
+
+    /**
+     *
      * @param fn
      */
     set authentification(fn: Function) {
@@ -347,9 +360,16 @@ export class ServerSettingsProvider implements IServerSettings {
      * @param value
      */
     set acceptMimes(value: string[]) {
-        this.map.set("acceptMimes", value) || [];
+        this.map.set("acceptMimes", value || []);
     }
 
+    get debug(): boolean {
+        return !!this.map.get("debug");
+    }
+
+    set debug(debug: boolean) {
+        this.map.set("debug", debug);
+    }
 
     /**
      *
@@ -377,6 +397,15 @@ export class ServerSettingsProvider implements IServerSettings {
         }
 
         return this;
+    }
+
+    /**
+     *
+     * @param propertyKey
+     * @returns {any<string, any>}
+     */
+    get(propertyKey: string) {
+        return this.map.get(propertyKey);
     }
 
     /**
