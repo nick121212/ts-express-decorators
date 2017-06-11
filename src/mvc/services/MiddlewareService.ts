@@ -4,7 +4,7 @@
 
 import {$log} from "ts-log-debug";
 
-import {EnvTypes, Type} from "../../core";
+import {Type} from "../../core";
 
 import {ServerSettingsService} from "../../server/services/ServerSettings";
 import {Service} from "../../di/decorators/service";
@@ -32,9 +32,8 @@ export class MiddlewareService extends ProxyMiddlewareRegistry {
     $afterServicesInit() {
 
         /* istanbul ignore next */
-        if (this.serverSettings.env !== EnvTypes.TEST) {
-            $log.info("[TSED] Import mvc");
-        }
+        $log.debug("[TSED] Build middlewares");
+
         InjectorService.buildRegistry(MiddlewareRegistry);
     }
 

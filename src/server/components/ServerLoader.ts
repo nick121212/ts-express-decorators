@@ -165,7 +165,7 @@ export abstract class ServerLoader implements IServerLifecycle {
                 $log.info(this.serverCodeName, `settings.${key} =>`, value);
             });
 
-        $log.info(this.serverCodeName, "Import services");
+        $log.info(this.serverCodeName, "Build services");
         InjectorService.load();
         this._injectorService = InjectorService.get<InjectorService>(InjectorService);
     }
@@ -175,13 +175,12 @@ export abstract class ServerLoader implements IServerLifecycle {
      */
     protected async loadMiddlewares(): Promise<any> {
 
-        $log.debug("[TSED]", "Mount middlewares");
         await this.callHook("$onMountingMiddlewares", undefined, this.expressApp);
 
         const controllerService = this.injectorService.get<ControllerService>(ControllerService);
         const routeService = this.injectorService.get<RouteService>(RouteService);
 
-        $log.info(this.serverCodeName, "Import controllers");
+        $log.info(this.serverCodeName, "Build controllers");
         controllerService.load();
 
         $log.info(this.serverCodeName, "Routes mounted :");
@@ -273,13 +272,13 @@ export abstract class ServerLoader implements IServerLifecycle {
             await this.loadMiddlewares();
             await this.startServers();
             await this.callHook("$onReady");
+
+            $log.info(this.serverCodeName, `Started in ${new Date().getTime() - start.getTime()} ms`);
+
         } catch (err) {
             return this.callHook("$onServerInitError", () => {
                 $log.error(this.serverCodeName, "HTTP Server error", err);
-            }, err)
-                .then(() => {
-                    $log.info(this.serverCodeName, `Started in ${new Date().getTime() - start.getTime()} ms`);
-                });
+            }, err);
         }
     }
 

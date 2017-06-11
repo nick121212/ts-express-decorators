@@ -7,7 +7,6 @@ import {Service} from "../../di/decorators/service";
 import {ServerSettingsService} from "../../server/services/ServerSettings";
 import {IFilter} from "../interfaces";
 import {Type} from "../../core/interfaces/Type";
-import {EnvTypes} from "../../core/interfaces/Env";
 import {FilterRegistry, ProxyFilterRegistry} from "../registries/FilterRegistry";
 import {FilterProvider} from "../class/FilterProvider";
 import {InjectorService} from "../../di/services/InjectorService";
@@ -18,7 +17,7 @@ import {UnknowFilterError} from "../errors/UnknowFilterError";
 @Service()
 export class FilterService extends ProxyFilterRegistry {
 
-    constructor(private serverSettings: ServerSettingsService, private injectorService: InjectorService) {
+    constructor(private injectorService: InjectorService, private serverSettings: ServerSettingsService) {
         super();
     }
 
@@ -28,9 +27,7 @@ export class FilterService extends ProxyFilterRegistry {
     $afterServicesInit() {
 
         /* istanbul ignore next */
-        if (this.serverSettings.env !== EnvTypes.TEST) {
-            $log.info("[TSED] Import mvc");
-        }
+        $log.debug("[TSED] Build filters");
 
         InjectorService.buildRegistry(FilterRegistry);
     }

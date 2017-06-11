@@ -1,6 +1,6 @@
-import {expect} from "../../tools";
-import {EnvTypes, ServerSettingsProvider} from "../../../src";
-import {ServerSettingsService} from "../../../src/server/services/ServerSettings";
+import {expect} from "../../../tools";
+import {EnvTypes, ServerSettingsProvider} from "../../../../src";
+import {ServerSettingsService} from "../../../../src/server/services/ServerSettings";
 
 describe("ServerSettingsProvider", () => {
 

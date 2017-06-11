@@ -2,6 +2,7 @@
  * @module di
  */
 /** */
+import {$log} from "ts-log-debug";
 import {nameOf} from "../../core";
 import {Metadata} from "../../core/class/Metadata";
 import {IInjectableMethod} from "../interfaces/InjectableMethod";
@@ -159,9 +160,15 @@ export class InjectorService extends ProxyProviderRegistry {
      */
     static buildRegistry(registry: Registry<Provider<any>, any>, callback: (provider: Provider<any>) => boolean = () => true): Registry<Provider<any>, any> {
         registry.forEach(provider => {
-            if (callback(provider)) {
+            if (typeof callback && callback(provider)) {
                 provider.instance = InjectorService.invoke(provider.useClass);
             }
+
+            const token = nameOf(provider.provide);
+            const useClass = nameOf(provider.useClass);
+
+            $log.debug("[TSED]", nameOf(provider.provide), "built", token === useClass ? "" : `from class ${useClass}`);
+
         });
 
         return registry;
@@ -227,7 +234,6 @@ export class InjectorService extends ProxyProviderRegistry {
                 if (service.$afterServicesInit) {
                     service.$afterServicesInit();
                 }
-
             });
 
     }

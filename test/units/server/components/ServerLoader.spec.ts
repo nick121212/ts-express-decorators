@@ -1,8 +1,8 @@
 import * as Proxyquire from "proxyquire";
-import {Metadata} from "../../../src/core/class/Metadata";
-import {SERVER_SETTINGS} from "../../../src/server/constants/index";
+import {Metadata} from "../../../../src/core/class/Metadata";
+import {SERVER_SETTINGS} from "../../../../src/server/constants/index";
 
-const {ServerLoader} = Proxyquire("../../../src/server/components/ServerLoader", {
+const {ServerLoader} = Proxyquire("../../../../src/server/components/ServerLoader", {
     "http": {},
     "https": {}// ,
     // "ts-log-debug": $logStub
@@ -12,12 +12,14 @@ const {ServerLoader} = Proxyquire("../../../src/server/components/ServerLoader",
 describe("ServerLoader", () => {
     before(() => {
         class TestServer extends ServerLoader {
-
+            $onInit() {
+            }
         }
 
         Metadata.set(SERVER_SETTINGS, {debug: true}, TestServer);
 
         this.server = new TestServer();
+
         return this.server.start();
     });
     after(() => {
@@ -26,6 +28,27 @@ describe("ServerLoader", () => {
 
     it("start()", () => {
         before(() => {
+
+        });
+    });
+
+    it("set()", () => {
+        before(() => {
+            this.server.set("view engine", "html");
+        });
+
+        it("should call express.set() with the right parameters", () => {
+
+        });
+    });
+
+    it("engine()", () => {
+        before(() => {
+            this.server.engine("jade", () => {
+            });
+        });
+
+        it("should call express.engine() with the right parameters", () => {
 
         });
     });
