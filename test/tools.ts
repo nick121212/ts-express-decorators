@@ -12,8 +12,8 @@ const assert = Chai.assert;
 
 const $logStub = {
     $log: {
-        log: Sinon.stub(),
-        debub: Sinon.stub(),
+        info: Sinon.stub(),
+        debug: Sinon.stub(),
         error: Sinon.stub(),
         warn: Sinon.stub(),
     }

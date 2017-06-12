@@ -3,10 +3,12 @@ node_js:
   - '4'
   - '5'
   - '6'
+  - '7'
   - 'node'
 
 env:
   - CXX=g++-4.8
+  - NODE_ENV=test
 addons:
   apt:
     sources:
@@ -23,4 +25,4 @@ script:
 after_success:
   - npm run test:travis
 
-sudo: required
+sudo: false

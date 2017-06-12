@@ -1,13 +1,11 @@
+import {$logStub, Sinon} from "../../../tools";
 import * as Proxyquire from "proxyquire";
 import {Metadata} from "../../../../src/core/class/Metadata";
 import {SERVER_SETTINGS} from "../../../../src/server/constants/index";
 
 const {ServerLoader} = Proxyquire("../../../../src/server/components/ServerLoader", {
-    "http": {},
-    "https": {}// ,
-    // "ts-log-debug": $logStub
+    "ts-log-debug": $logStub
 });
-
 
 describe("ServerLoader", () => {
     before(() => {
@@ -19,6 +17,12 @@ describe("ServerLoader", () => {
         Metadata.set(SERVER_SETTINGS, {debug: true}, TestServer);
 
         this.server = new TestServer();
+        this.useStub = Sinon.stub(this.server._expressApp, "use");
+        this.engineStub = Sinon.stub(this.server._expressApp, "engine");
+        this.httpServerOnStub = Sinon.stub(this.server._httpServer, "on").returns(this.server._httpServer);
+        this.httpsServerOnStub = Sinon.stub(this.server._httpsServer, "on").returns(this.server._httpsServer);
+        this.httpServerListenStub = Sinon.stub(this.server._httpServer, "listen").returns(this.server._httpServer);
+        this.httpsServerListenStub = Sinon.stub(this.server._httpsServer, "listen").returns(this.server._httpsServer);
 
         return this.server.start();
     });
